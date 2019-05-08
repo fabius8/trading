@@ -14,7 +14,8 @@ from logbook import Logger
 
 algo_namespace = 'Danchian channel'
 log = Logger(algo_namespace)
-ChannelPeriods = 20
+EntryChannelPeriods = 20
+ExitChannelPeriods = 20
 
 
 def initialize(context):
@@ -31,12 +32,12 @@ def handle_data(context, data):
     price = data.current(context.asset, 'price')
     highest = data.history(context.asset,
                            'high',
-                           bar_count=ChannelPeriods,
-                           frequency="240T")[-21:-1].max()
+                           bar_count=EntryChannelPeriods,
+                           frequency="4h")[-21:-1].max()
     lowest = data.history(context.asset,
                           'low',
-                          bar_count=ChannelPeriods,
-                          frequency="240T")[-21:-1].min()
+                          bar_count=ExitChannelPeriods,
+                          frequency="4h")[-21:-1].min()
 
     if context.base_price is None:
         context.base_price = price
@@ -50,12 +51,14 @@ def handle_data(context, data):
     print(price, highest, lowest)
 
     pos_amount = context.portfolio.positions[context.asset].amount
-    if price > highest and pos_amount == 0:
-        # buy
+    if price > highest and pos_amount <= 0:
+        # long
         order_target_percent(context.asset, 1)
-    elif price < lowest and pos_amount > 0:
-        # sell
-        order_target_percent(context.asset, 0)
+        print("LONG")
+    elif price < lowest and pos_amount >= 0:
+        # short
+        order_target_percent(context.asset, -1)
+        print("SHORT")
 
 
 def analyze(context, perf):
@@ -121,6 +124,11 @@ def analyze(context, perf):
     start, end = ax4.get_ylim()
     ax4.yaxis.set_ticks(np.arange(0, end, end / 5))
 
+    ax1.grid(True, linestyle='-.')
+    ax2.grid(True, linestyle='-.')
+    ax3.grid(True, linestyle='-.')
+    ax4.grid(True, linestyle='-.')
+
     plt.show()
 
 if __name__ == '__main__':
@@ -133,6 +141,6 @@ if __name__ == '__main__':
         exchange_name='binance',
         algo_namespace='btc_donchian',
         quote_currency='usdt',
-        start=pd.to_datetime('2017-11-17', utc=True),
+        start=pd.to_datetime('2018-5-5', utc=True),
         end=pd.to_datetime('2019-5-5', utc=True),
     )
