@@ -1,6 +1,10 @@
+"""
+Test BTC on binance 4h on Donchian Channel
+By fabius8
+"""
 from catalyst import run_algorithm
 import numpy as np
-from catalyst.api import order, record, symbol, order_target_percent
+from catalyst.api import record, symbol, order_target_percent
 from catalyst.exchange.utils.stats_utils import extract_transactions
 
 import matplotlib.pyplot as plt
@@ -127,7 +131,7 @@ if __name__ == '__main__':
         handle_data=handle_data,
         analyze=analyze,
         exchange_name='binance',
-        algo_namespace='buy_btc_simple',
+        algo_namespace='btc_donchian',
         quote_currency='usdt',
         start=pd.to_datetime('2017-11-17', utc=True),
         end=pd.to_datetime('2019-5-5', utc=True),
