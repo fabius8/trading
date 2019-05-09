@@ -6,6 +6,11 @@ from catalyst import run_algorithm
 import numpy as np
 from catalyst.api import record, symbol, order_target_percent
 from catalyst.exchange.utils.stats_utils import extract_transactions
+import smtplib
+from email.mime.text import MIMEText
+from email.header import Header
+sender = 'fabius888@126.com'
+receivers = ['fabius8@163.com', '18994900535@163.com']
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -18,6 +23,20 @@ def initialize(context):
     context.i = -1
     context.stocks = [symbol('btc_usdt'), symbol('eth_usdt'), symbol('bnb_usdt')]
     context.base_price = None
+
+def send_email(stock, indicator):
+    try:
+        if indicator == "LONG":
+            subject = stock + indictor
+        elif indicator == "SHORT":
+            subject = stock + indictor
+        smtpObj = smtplib.SMTP('smtp.126.com', 25)
+        smtpObj.login('','');
+        smtpObj.sendmail(sender, receivers, message.as_string())
+        message['Subject'] = Header(subject, 'utf-8')
+        smtpObj.sendmail(sender, receivers, message.as_string())
+    except smtplib.SMTPException:
+        pass
 
 
 def handle_data(context, data):
@@ -40,10 +59,11 @@ def handle_data(context, data):
         print(stock, price, highest, lowest)
 
         if price > highest:
-            print(stock, "LONG")
+            indicator = "LONG"
+            send_email(stock, indicator)
         elif price < lowest:
-            order_target_percent(context.asset, -1)
-            print(stock, "SHORT")
+            indicator = "SHORT"
+            send_email(stock, indicator)
 
 
 if __name__ == '__main__':
