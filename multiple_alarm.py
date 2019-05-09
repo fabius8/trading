@@ -10,10 +10,13 @@ import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
 sender = 'fabius888@126.com'
-receivers = ['fabius8@163.com', '18994900535@163.com']
+receivers = ['fabius8@163.com', '18994900535@163.com', 'fabius888@126.com']
 
 import matplotlib.pyplot as plt
 import pandas as pd
+import json
+
+auth = json.load(open("auth.json"))
 
 EntryChannelPeriods = 20
 ExitChannelPeriods = 20
@@ -25,18 +28,24 @@ def initialize(context):
     context.base_price = None
 
 def send_email(stock, indicator):
+    print("send_email")
+    message = MIMEText('Donchian channel break', 'plain', 'utf-8')
+    message['From'] = sender
+    message['To'] =  ",".join(receivers)
     try:
         if indicator == "LONG":
-            subject = stock + indictor
+            subject = str(stock) + indicator
         elif indicator == "SHORT":
-            subject = stock + indictor
-        smtpObj = smtplib.SMTP('smtp.126.com', 25)
-        smtpObj.login('','');
+            subject = str(stock) + indicator
+        smtpObj = smtplib.SMTP_SSL('smtp.126.com', 465)
+        smtpObj.set_debuglevel(1)
+        smtpObj.login(auth['username'], auth['password']);
+        message['Subject'] = subject
         smtpObj.sendmail(sender, receivers, message.as_string())
-        message['Subject'] = Header(subject, 'utf-8')
-        smtpObj.sendmail(sender, receivers, message.as_string())
-    except smtplib.SMTPException:
-        pass
+        smtpObj.quit()
+        smtpObj.close()
+    except smtplib.SMTPException as e:
+        print("Send Mail Fail", e)
 
 
 def handle_data(context, data):
