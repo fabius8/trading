@@ -30,13 +30,14 @@ def handle_data(context, data):
         return
 
     price = data.current(context.asset, 'price')
+
     highest = data.history(context.asset,
                            'high',
-                           bar_count=EntryChannelPeriods,
+                           bar_count=EntryChannelPeriods + 1,
                            frequency="4h")[-21:-1].max()
     lowest = data.history(context.asset,
                           'low',
-                          bar_count=ExitChannelPeriods,
+                          bar_count=ExitChannelPeriods + 1,
                           frequency="4h")[-21:-1].min()
 
     if context.base_price is None:
