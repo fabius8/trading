@@ -31,6 +31,7 @@ def initialize(context):
     context.asset = symbol('btc_usdt')
     context.base_price = None
     context.freq = '4h'
+    context.mark_price = 0
 
 
 def handle_data(context, data):
@@ -81,12 +82,22 @@ def handle_data(context, data):
         # long
         order_target_percent(context.asset, 0)
         order_target_percent(context.asset, positionSizePercent)
+        context.mark_price = price
         print("LONG")
     elif price < lowest and pos_amount >= 0:
         # short
         order_target_percent(context.asset, 0)
         order_target_percent(context.asset, -positionSizePercent)
+        context.mark_price = price
         print("SHORT")
+
+    # stop loss
+    if pos_amount > 0 and price < (context.mark_price - 2 * N):
+        print("LONG STOP LOSS")
+        order_target_percent(context.asset, 0)
+    elif pos_amount < 0 and price > (context.mark_price + 2 * N):
+        order_target_percent(context.asset, 0)
+        print("SHORT STOP LOSS")
 
 
 def analyze(context, perf):
