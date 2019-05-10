@@ -6,7 +6,6 @@ from catalyst import run_algorithm
 import numpy as np
 from catalyst.api import record, symbol, order_target_percent
 from catalyst.exchange.utils.stats_utils import extract_transactions
-import ta
 import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
@@ -88,9 +87,6 @@ def handle_data(context, data):
 
         highest = highs.max()
         lowest = lows.min()
-
-        #ATR = ta.average_true_range(highs, lows, closes, n=context.freq, fillna=False)
-        #print("ATR:", ATR)
 
         print(stock, price, highest, lowest)
 
