@@ -36,10 +36,10 @@ def initialize(context):
 
 def send_email(stock, indicator, freq, price, highest, lowest, N):
     print("send_email")
-    text = str(stock) 
+    text = str(stock)
     text += '\nDonchian Channel break ' + freq
     text += '\nYou must hold position ' + indicator
-    text += '\n\nCurrent price: ' + str(price) 
+    text += '\n\nCurrent price: ' + str(price)
     text += '\nUpper: ' + str(highest)
     text += '\nLower: ' + str(lowest)
     text += '\nATR: ' + str(N)

@@ -18,10 +18,19 @@ EntryChannelPeriods = 20
 ExitChannelPeriods = 20
 
 
+def ATR(highs, lows, closes):
+    high_to_low = highs - lows
+    high_to_prev_close = abs(highs[1:] - closes[:-1])
+    low_to_prev_close = abs(lows[1:] - closes[:-1])
+    TR = high_to_low.combine(high_to_prev_close, max, fill_value=0).combine(low_to_prev_close, max, fill_value=0)
+    return TR.sum() / TR.count()
+
+
 def initialize(context):
     context.i = 0
     context.asset = symbol('btc_usdt')
     context.base_price = None
+    context.freq = '4h'
 
 
 def handle_data(context, data):
@@ -31,14 +40,30 @@ def handle_data(context, data):
 
     price = data.current(context.asset, 'price')
 
-    highest = data.history(context.asset,
-                           'high',
-                           bar_count=EntryChannelPeriods + 1,
-                           frequency="4h")[-21:-1].max()
-    lowest = data.history(context.asset,
-                          'low',
-                          bar_count=ExitChannelPeriods + 1,
-                          frequency="4h")[-21:-1].min()
+    closes = data.history(context.asset,
+                          'close',
+                          bar_count=EntryChannelPeriods + 1,
+                          frequency=context.freq)
+
+    highs = data.history(context.asset,
+                         'high',
+                         bar_count=EntryChannelPeriods + 1,
+                         frequency=context.freq)
+
+    lows = data.history(context.asset,
+                        'low',
+                        bar_count=ExitChannelPeriods + 1,
+                        frequency=context.freq)
+
+    N = ATR(highs[1:], lows[1:], closes[1:])
+    print(context.asset, "ATR:", N)
+    positionSizePercent = price * 0.01 / N
+
+    highs = highs[-21:-1]
+    lows = lows[-21:-1]
+
+    highest = highs.max()
+    lowest = lows.min()
 
     if context.base_price is None:
         context.base_price = price
@@ -54,11 +79,13 @@ def handle_data(context, data):
     pos_amount = context.portfolio.positions[context.asset].amount
     if price > highest and pos_amount <= 0:
         # long
-        order_target_percent(context.asset, 1)
+        order_target_percent(context.asset, 0)
+        order_target_percent(context.asset, positionSizePercent)
         print("LONG")
     elif price < lowest and pos_amount >= 0:
         # short
-        order_target_percent(context.asset, -1)
+        order_target_percent(context.asset, 0)
+        order_target_percent(context.asset, -positionSizePercent)
         print("SHORT")
 
 
