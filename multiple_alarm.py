@@ -6,6 +6,7 @@ from catalyst import run_algorithm
 import numpy as np
 from catalyst.api import record, symbol, order_target_percent
 from catalyst.exchange.utils.stats_utils import extract_transactions
+import ta
 import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
@@ -34,9 +35,14 @@ def initialize(context):
     context.base_price = None
     context.freq = '4h'
 
-def send_email(stock, indicator, freq):
+def send_email(stock, indicator, freq, price, highest, lowest):
     print("send_email")
-    text = str(stock) + ' Donchian Channel break ' + freq + '! Must hold position ' + indicator
+    text = str(stock) 
+    text += '\nDonchian Channel break ' + freq
+    text += '\nYou must hold position ' + indicator
+    text += '\n\nCurrent price: ' + str(price) 
+    text += '\nUpper: ' + str(highest)
+    text += '\nLower: ' + str(lowest)
     message = MIMEText(text, 'plain', 'utf-8')
     message['From'] = sender
     message['To'] =  ",".join(receivers)
@@ -65,23 +71,35 @@ def handle_data(context, data):
     for stock in context.stocks:
         price = data.current(stock, 'price')
 
-        highest = data.history(stock,
+        closes = data.history(stock,
+                'close',
+                bar_count=EntryChannelPeriods + 1,
+                frequency=context.freq)[-21:-1]
+
+        highs = data.history(stock,
                 'high',
                 bar_count=EntryChannelPeriods + 1,
-                frequency=context.freq)[-21:-1].max()
-        lowest = data.history(stock,
+                frequency=context.freq)[-21:-1]
+
+        lows = data.history(stock,
                 'low',
                 bar_count=ExitChannelPeriods + 1,
-                frequency=context.freq)[-21:-1].min()
+                frequency=context.freq)[-21:-1]
+
+        highest = highs.max()
+        lowest = lows.min()
+
+        #ATR = ta.average_true_range(highs, lows, closes, n=context.freq, fillna=False)
+        #print("ATR:", ATR)
 
         print(stock, price, highest, lowest)
 
         if price > highest:
             indicator = "LONG"
-            send_email(stock, indicator, context.freq)
+            send_email(stock, indicator, context.freq, price, highest, lowest)
         elif price < lowest:
             indicator = "SHORT"
-            send_email(stock, indicator, context.freq)
+            send_email(stock, indicator, context.freq, price, highest, lowest)
 
 
 if __name__ == '__main__':
