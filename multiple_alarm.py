@@ -34,7 +34,7 @@ def initialize(context):
     context.base_price = None
     context.freq = '4h'
 
-def send_email(stock, indicator, freq, price, highest, lowest):
+def send_email(stock, indicator, freq, price, highest, lowest, N):
     print("send_email")
     text = str(stock) 
     text += '\nDonchian Channel break ' + freq
@@ -42,6 +42,7 @@ def send_email(stock, indicator, freq, price, highest, lowest):
     text += '\n\nCurrent price: ' + str(price) 
     text += '\nUpper: ' + str(highest)
     text += '\nLower: ' + str(lowest)
+    text += '\nATR: ' + str(N)
     message = MIMEText(text, 'plain', 'utf-8')
     message['From'] = sender
     message['To'] =  ",".join(receivers)
@@ -59,6 +60,13 @@ def send_email(stock, indicator, freq, price, highest, lowest):
         smtpObj.close()
     except smtplib.SMTPException as e:
         print("Send Mail Fail", e)
+
+def ATR(highs, lows, closes):
+    high_to_low = highs[1:] - lows[1:]
+    high_to_prev_close = abs(highs[1:] - closes[:-1])
+    low_to_prev_close = abs(lows[1:] - closes[:-1])
+    TR = high_to_low.combine(high_to_prev_close, max).combine(low_to_prev_close, max)
+    return TR.sum()/TR.count()
 
 
 def handle_data(context, data):
@@ -88,14 +96,17 @@ def handle_data(context, data):
         highest = highs.max()
         lowest = lows.min()
 
+        N = ATR(highs, lows, closes)
+        print(stock, "ATR:", N)
+
         print(stock, price, highest, lowest)
 
         if price > highest:
             indicator = "LONG"
-            send_email(stock, indicator, context.freq, price, highest, lowest)
+            send_email(stock, indicator, context.freq, price, highest, lowest, N)
         elif price < lowest:
             indicator = "SHORT"
-            send_email(stock, indicator, context.freq, price, highest, lowest)
+            send_email(stock, indicator, context.freq, price, highest, lowest, N)
 
 
 if __name__ == '__main__':
