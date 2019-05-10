@@ -62,11 +62,11 @@ def send_email(stock, indicator, freq, price, highest, lowest, N):
         print("Send Mail Fail", e)
 
 def ATR(highs, lows, closes):
-    high_to_low = highs[1:] - lows[1:]
+    high_to_low = highs - lows
     high_to_prev_close = abs(highs[1:] - closes[:-1])
     low_to_prev_close = abs(lows[1:] - closes[:-1])
-    TR = high_to_low.combine(high_to_prev_close, max).combine(low_to_prev_close, max)
-    return TR.sum()/TR.count()
+    TR = high_to_low.combine(high_to_prev_close, max, fill_value=0).combine(low_to_prev_close, max, fill_value=0)
+    return TR.sum() / TR.count()
 
 
 def handle_data(context, data):
@@ -81,24 +81,26 @@ def handle_data(context, data):
         closes = data.history(stock,
                 'close',
                 bar_count=EntryChannelPeriods + 1,
-                frequency=context.freq)[-21:-1]
+                frequency=context.freq)
 
         highs = data.history(stock,
                 'high',
                 bar_count=EntryChannelPeriods + 1,
-                frequency=context.freq)[-21:-1]
+                frequency=context.freq)
 
         lows = data.history(stock,
                 'low',
                 bar_count=ExitChannelPeriods + 1,
-                frequency=context.freq)[-21:-1]
+                frequency=context.freq)
+
+        N = ATR(highs[1:], lows[1:], closes[1:])
+        print(stock, "ATR:", N)
+
+        highs = highs[-21:-1]
+        lows = lows[-21:-1]
 
         highest = highs.max()
         lowest = lows.min()
-
-        N = ATR(highs, lows, closes)
-        print(stock, "ATR:", N)
-
         print(stock, price, highest, lowest)
 
         if price > highest:
