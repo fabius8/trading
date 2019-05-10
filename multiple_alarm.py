@@ -10,7 +10,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
 sender = 'fabius888@126.com'
-receivers = ['fabius8@163.com', '18994900535@163.com', 'fabius888@126.com']
+receivers = ['fabius8@163.com', 'fabius888@126.com']
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -24,12 +24,20 @@ ExitChannelPeriods = 20
 
 def initialize(context):
     context.i = -1
-    context.stocks = [symbol('btc_usdt'), symbol('eth_usdt'), symbol('bnb_usdt')]
+    context.stocks = [
+            symbol('btc_usdt'),
+            symbol('eth_usdt'),
+            symbol('bnb_usdt'),
+            symbol('ltc_usdt'),
+            symbol('eos_usdt'),
+            symbol('bchabc_usdt')]
     context.base_price = None
+    context.freq = '4h'
 
-def send_email(stock, indicator):
+def send_email(stock, indicator, freq):
     print("send_email")
-    message = MIMEText('Donchian channel break', 'plain', 'utf-8')
+    text = str(stock) + ' Donchian Channel break ' + freq + '! Must hold position ' + indicator
+    message = MIMEText(text, 'plain', 'utf-8')
     message['From'] = sender
     message['To'] =  ",".join(receivers)
     try:
@@ -50,7 +58,8 @@ def send_email(stock, indicator):
 
 def handle_data(context, data):
     context.i += 1
-    if context.i % 5 != 0:
+    # 2 hour report
+    if context.i % 120 != 0:
         return
 
     for stock in context.stocks:
@@ -59,20 +68,20 @@ def handle_data(context, data):
         highest = data.history(stock,
                 'high',
                 bar_count=EntryChannelPeriods + 1,
-                frequency="4h")[-21:-1].max()
+                frequency=context.freq)[-21:-1].max()
         lowest = data.history(stock,
                 'low',
                 bar_count=ExitChannelPeriods + 1,
-                frequency="4h")[-21:-1].min()
+                frequency=context.freq)[-21:-1].min()
 
         print(stock, price, highest, lowest)
 
         if price > highest:
             indicator = "LONG"
-            send_email(stock, indicator)
+            send_email(stock, indicator, context.freq)
         elif price < lowest:
             indicator = "SHORT"
-            send_email(stock, indicator)
+            send_email(stock, indicator, context.freq)
 
 
 if __name__ == '__main__':
