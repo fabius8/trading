@@ -1,5 +1,5 @@
 """
-Test BTC on binance 4h on Donchian Channel
+Alarm cryptocurrency on binance 4h on Donchian Channel break
 By fabius8
 """
 from catalyst import run_algorithm

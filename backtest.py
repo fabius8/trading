@@ -1,5 +1,5 @@
 """
-Test BTC on binance 4h on Donchian Channel
+Test cryptocurrency on binance 4h on Donchian Channel
 By fabius8
 """
 from catalyst import run_algorithm
@@ -10,10 +10,14 @@ from catalyst.exchange.utils.stats_utils import extract_transactions
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from logbook import Logger
+import argparse
 
-algo_namespace = 'Danchian channel'
-log = Logger(algo_namespace)
+parser = argparse.ArgumentParser()
+parser.add_argument("--symbol", help="input cryptocurrency symbol pair", type=str)
+args = parser.parse_args()
+
+print("symbol:", args.symbol)
+
 EntryChannelPeriods = 20
 ExitChannelPeriods = 20
 
@@ -28,7 +32,7 @@ def ATR(highs, lows, closes):
 
 def initialize(context):
     context.i = 0
-    context.asset = symbol('btc_usdt')
+    context.asset = symbol(args.symbol)
     context.base_price = None
     context.freq = '4h'
     context.mark_price = 0
@@ -92,10 +96,11 @@ def handle_data(context, data):
         print("SHORT")
 
     # stop loss
-    if pos_amount > 0 and price < (context.mark_price - 2 * N):
+    stop_loss = 0
+    if pos_amount > 0 and price < (context.mark_price - 2 * N) and stop_loss == 1:
         print("LONG STOP LOSS")
         order_target_percent(context.asset, 0)
-    elif pos_amount < 0 and price > (context.mark_price + 2 * N):
+    elif pos_amount < 0 and price > (context.mark_price + 2 * N) and stop_loss == 1:
         order_target_percent(context.asset, 0)
         print("SHORT STOP LOSS")
 
@@ -178,7 +183,7 @@ if __name__ == '__main__':
         handle_data=handle_data,
         analyze=analyze,
         exchange_name='binance',
-        algo_namespace='btc_donchian',
+        algo_namespace='backtest',
         quote_currency='usdt',
         start=pd.to_datetime('2018-5-5', utc=True),
         end=pd.to_datetime('2019-5-5', utc=True),
