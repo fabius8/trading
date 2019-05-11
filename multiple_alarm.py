@@ -9,7 +9,7 @@ from catalyst.exchange.utils.stats_utils import extract_transactions
 import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
-sender = 'fabius888@126.com'
+sender = 'fabius8@aliyun.com'
 receivers = ['fabius8@163.com', 'fabius888@126.com']
 
 import matplotlib.pyplot as plt
@@ -52,7 +52,7 @@ def send_email(stock, indicator, freq, price, highest, lowest, N):
             subject = str(stock) + indicator
         elif indicator == "SHORT":
             subject = str(stock) + indicator
-        smtpObj = smtplib.SMTP_SSL('smtp.126.com', 465)
+        smtpObj = smtplib.SMTP_SSL('smtp.aliyun.com', 465)
         smtpObj.set_debuglevel(1)
         smtpObj.login(auth['username'], auth['password']);
         message['Subject'] = subject
@@ -61,8 +61,6 @@ def send_email(stock, indicator, freq, price, highest, lowest, N):
         smtpObj.close()
     except smtplib.SMTPException as e:
         print("Send Mail Fail", e)
-    # anti 126 mail spam
-    time.sleep(10)
 
 def ATR(highs, lows, closes):
     high_to_low = highs - lows
