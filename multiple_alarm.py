@@ -15,6 +15,7 @@ receivers = ['fabius8@163.com', 'fabius888@126.com']
 import matplotlib.pyplot as plt
 import pandas as pd
 import json
+import time
 
 auth = json.load(open("auth.json"))
 
@@ -60,6 +61,8 @@ def send_email(stock, indicator, freq, price, highest, lowest, N):
         smtpObj.close()
     except smtplib.SMTPException as e:
         print("Send Mail Fail", e)
+    # anti 126 mail spam
+    time.sleep(10)
 
 def ATR(highs, lows, closes):
     high_to_low = highs - lows
