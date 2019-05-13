@@ -34,7 +34,8 @@ def initialize(context):
     context.base_price = None
     context.freq = '4h'
 
-def send_email(stock, indicator, freq, price, highest, lowest, N):
+def send_email(stock, indicator, freq, price, highest, lowest, N,
+               positionSizePercent, positionSize):
     print("send_email")
     text = str(stock)
     text += '\nDonchian Channel break ' + freq
@@ -43,6 +44,9 @@ def send_email(stock, indicator, freq, price, highest, lowest, N):
     text += '\nUpper: ' + str(highest)
     text += '\nLower: ' + str(lowest)
     text += '\nATR: ' + str(N)
+    text += '\nPosition Size Percent: ' + str(positionSizePercent)[0:6] + '%'
+    text += '\nPosition Amount: ' + str(positionSize) + ' units'
+
     message = MIMEText(text, 'plain', 'utf-8')
     message['From'] = sender
     message['To'] =  ",".join(receivers)
@@ -103,12 +107,18 @@ def handle_data(context, data):
         lowest = lows.min()
         print(stock, price, highest, lowest)
 
+        positionSizePercent = price / N
+        positionSize = 23000 * 0.01 / N 
         if price > highest:
             indicator = "LONG"
-            send_email(stock, indicator, context.freq, price, highest, lowest, N)
+            send_email(stock, indicator, context.freq,
+                       price, highest, lowest, N,
+                       positionSizePercent, positionSize)
         elif price < lowest:
             indicator = "SHORT"
-            send_email(stock, indicator, context.freq, price, highest, lowest, N)
+            send_email(stock, indicator, context.freq,
+                       price, highest, lowest, N,
+                       positionSizePercent, positionSize)
 
 
 if __name__ == '__main__':

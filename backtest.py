@@ -104,6 +104,8 @@ def handle_data(context, data):
         order_target_percent(context.asset, 0)
         print("SHORT STOP LOSS")
 
+    print(context.portfolio)
+
 
 def analyze(context, perf):
     # Get the quote_currency that was passed as a parameter to the simulation
