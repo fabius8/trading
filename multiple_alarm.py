@@ -34,6 +34,12 @@ def initialize(context):
             symbol('bchabc_usdt')]
     context.base_price = None
     context.freq = '4h'
+    context.report = {}
+    context.report_interval = {}
+    for stock in context.stocks:
+        context.report[stock] = 0
+        context.report_interval[stock] = 60
+
 
 def send_email(stock, indicator, freq, price, highest, lowest, N,
                positionSizePercent, positionSize):
@@ -76,11 +82,17 @@ def ATR(highs, lows, closes):
 
 def handle_data(context, data):
     context.i += 1
-    # 2 hour report
-    if context.i % 120 != 0:
+    # 1 min report
+    if context.i % 1 != 0:
         return
 
     for stock in context.stocks:
+        if context.report[stock] == 1 and context.report_interval[stock] == 0:
+            context.report[stock] = 0
+        if context.report[stock] == 1 and context.report_interval[stock] > 0:
+            context.report_interval[stock] -= 1
+            continue
+
         price = data.current(stock, 'price')
 
         closes = data.history(stock,
@@ -115,16 +127,20 @@ def handle_data(context, data):
             send_email(stock, indicator, context.freq,
                        price, highest, lowest, N,
                        positionSizePercent, positionSize)
+            context.report[stock] = 1
+            context.report_interval[stock] = 60
         elif price < lowest:
             indicator = "SHORT"
             send_email(stock, indicator, context.freq,
                        price, highest, lowest, N,
                        positionSizePercent, positionSize)
+            context.report[stock] = 1
+            context.report_interval[stock] = 60
 
 
 if __name__ == '__main__':
     run_algorithm(
-        capital_base=1000,
+        capital_base=23000,
         data_frequency='minute',
         initialize=initialize,
         handle_data=handle_data,
