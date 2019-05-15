@@ -42,7 +42,8 @@ def initialize(context):
 
 
 def send_email(stock, indicator, freq, price, highest, lowest, N,
-               positionSizePercent, positionSize):
+               positionSizePercent, positionSize,
+               context):
     print("send_email")
     text = str(stock)
     text += '\nDonchian Channel break ' + freq
@@ -71,6 +72,9 @@ def send_email(stock, indicator, freq, price, highest, lowest, N,
         smtpObj.close()
     except smtplib.SMTPException as e:
         print("Send Mail Fail", e)
+
+    context.report[stock] = 1
+    context.report_interval[stock] = 60
 
 def ATR(highs, lows, closes):
     high_to_low = highs - lows
@@ -121,21 +125,19 @@ def handle_data(context, data):
         print(stock, price, highest, lowest)
 
         positionSizePercent = price / N
-        positionSize = 23000 * 0.01 / N 
+        positionSize = 23000 * 0.01 / N
         if price > highest:
             indicator = "LONG"
             send_email(stock, indicator, context.freq,
                        price, highest, lowest, N,
-                       positionSizePercent, positionSize)
-            context.report[stock] = 1
-            context.report_interval[stock] = 60
+                       positionSizePercent, positionSize,
+                       context)
         elif price < lowest:
             indicator = "SHORT"
             send_email(stock, indicator, context.freq,
                        price, highest, lowest, N,
-                       positionSizePercent, positionSize)
-            context.report[stock] = 1
-            context.report_interval[stock] = 60
+                       positionSizePercent, positionSize,
+                       context)
 
 
 if __name__ == '__main__':
