@@ -26,12 +26,22 @@ ExitChannelPeriods = 20
 def initialize(context):
     context.i = -1
     context.stocks = [
-            symbol('btc_usdt'),
-            symbol('eth_usdt'),
-            symbol('bnb_usdt'),
-            symbol('ltc_usdt'),
-            symbol('eos_usdt'),
-            symbol('bchabc_usdt')]
+        symbol('btc_usdt'),
+        symbol('eth_usdt'),
+        symbol('bnb_usdt'),
+        symbol('ltc_usdt'),
+        symbol('eos_usdt'),
+        symbol('etc_usdt'),
+        symbol('zec_usdt'),
+        symbol('xrp_usdt'),
+        symbol('qtum_usdt'),
+        symbol('dash_usdt'),
+        symbol('xmr_usdt'),
+        symbol('trx_usdt'),
+        symbol('neo_usdt'),
+        symbol('bat_usdt'),
+        symbol('tusd_usdt'),
+        symbol('bchabc_usdt')]
     context.base_price = None
     context.freq = '4h'
     context.report = {}
