@@ -48,7 +48,7 @@ def initialize(context):
     context.report_interval = {}
     for stock in context.stocks:
         context.report[stock] = 0
-        context.report_interval[stock] = 60
+        context.report_interval[stock] = 240
 
 
 def send_email(stock, indicator, freq, price, highest, lowest, N,
@@ -84,7 +84,7 @@ def send_email(stock, indicator, freq, price, highest, lowest, N,
         print("Send Mail Fail", e)
 
     context.report[stock] = 1
-    context.report_interval[stock] = 60
+    context.report_interval[stock] = 240
 
 def ATR(highs, lows, closes):
     high_to_low = highs - lows
