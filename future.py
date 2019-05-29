@@ -91,6 +91,8 @@ def monitor():
             continue
         price = df['close'][20]
         N = ATR(df['high'][1:20], df['low'][1:20], df['close'][1:20])
+        if N == 0:
+            continue
         highest = df['high'][0:19].max()
         lowest = df['low'][0:19].min()
         print(i, price, highest, lowest)
