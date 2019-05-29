@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Alarm cryptocurrency on binance 4h on Donchian Channel break
 By fabius8
@@ -25,44 +26,11 @@ ExitChannelPeriods = 20
 
 def initialize(context):
     context.i = -1
-    context.stocks = [
-        symbol('btc_usdt'),
-        symbol('eth_usdt'),
-        symbol('bnb_usdt'),
-        symbol('ltc_usdt'),
-        symbol('ada_usdt'),
-        symbol('btt_usdt'),
-        symbol('xlm_usdt'),
-        symbol('matic_usdt'),
-        symbol('iota_usdt'),
-        symbol('ont_usdt'),
-        symbol('atom_usdt'),
-        symbol('icx_usdt'),
-        symbol('hot_usdt'),
-        symbol('fet_usdt'),
-        symbol('link_usdt'),
-        symbol('waves_usdt'),
-        symbol('enj_usdt'),
-        symbol('iost_usdt'),
-        symbol('nano_usdt'),
-        symbol('zrx_usdt'),
-        symbol('eos_usdt'),
-        symbol('etc_usdt'),
-        symbol('zec_usdt'),
-        symbol('xrp_usdt'),
-        symbol('theta_usdt'),
-        symbol('omg_usdt'),
-        symbol('nuls_usdt'),
-        symbol('ong_usdt'),
-        symbol('mith_usdt'),
-        symbol('qtum_usdt'),
-        symbol('dash_usdt'),
-        symbol('xmr_usdt'),
-        symbol('trx_usdt'),
-        symbol('neo_usdt'),
-        symbol('bat_usdt'),
-        symbol('tusd_usdt'),
-        symbol('bchabc_usdt')]
+    context.stocks = []
+    exchange = context.exchanges['binance']
+    for pair in exchange.markets:
+        if pair['quote'] == "USDT":
+            context.stocks.append(symbol((pair['base'].lower() + '_' + pair['quote'].lower())))
     context.base_price = None
     context.freq = '4h'
     context.report = {}
@@ -127,23 +95,25 @@ def handle_data(context, data):
         if context.report[stock] == 1 and context.report_interval[stock] > 0:
             context.report_interval[stock] -= 1
             continue
+        try:
+            price = data.current(stock, 'price')
+            closes = data.history(stock,
+                                  'close',
+                                  bar_count=EntryChannelPeriods + 1,
+                                  frequency=context.freq)
 
-        price = data.current(stock, 'price')
+            highs = data.history(stock,
+                                 'high',
+                                 bar_count=EntryChannelPeriods + 1,
+                                 frequency=context.freq)
 
-        closes = data.history(stock,
-                'close',
-                bar_count=EntryChannelPeriods + 1,
-                frequency=context.freq)
-
-        highs = data.history(stock,
-                'high',
-                bar_count=EntryChannelPeriods + 1,
-                frequency=context.freq)
-
-        lows = data.history(stock,
-                'low',
-                bar_count=ExitChannelPeriods + 1,
-                frequency=context.freq)
+            lows = data.history(stock,
+                                'low',
+                                bar_count=ExitChannelPeriods + 1,
+                                frequency=context.freq)
+        except Exception as e:
+            print(e)
+            continue
 
         N = ATR(highs[1:], lows[1:], closes[1:])
         print(stock, "ATR:", N)

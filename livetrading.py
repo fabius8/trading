@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Alarm cryptocurrency on binance 4h on Donchian Channel break
 By fabius8
@@ -101,19 +102,14 @@ def handle_data(context, data):
 
     N = ATR(highs[1:], lows[1:], closes[1:])
 
-    if price > highest:
-        indicator = "LONG"
-    elif price < lowest:
-        indicator = "SHORT"
-    else:
-        return
-
     exchange = context.exchanges['binance']
-    print(exchange.get_balances())
+    for pair in exchange.markets:
+        if pair['quote'] == "USDT":
+            print(pair['base'].lower() + '_' + pair['quote'].lower())
 
 if __name__ == '__main__':
     run_algorithm(
-        capital_base=2000,
+        capital_base=1000,
         data_frequency='minute',
         initialize=initialize,
         handle_data=handle_data,
