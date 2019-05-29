@@ -63,7 +63,7 @@ def send_email(stock, indicator, freq, price, highest, lowest, N,
         elif indicator == "SHORT":
             subject = str(stock) + indicator
         smtpObj = smtplib.SMTP_SSL('smtp.aliyun.com', 465)
-        smtpObj.set_debuglevel(1)
+        #smtpObj.set_debuglevel(1)
         smtpObj.login(auth['username'], auth['password']);
         message['Subject'] = subject
         smtpObj.sendmail(sender, receivers, message.as_string())
