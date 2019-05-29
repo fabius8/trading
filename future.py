@@ -3,6 +3,7 @@ import jqdatasdk
 import time
 import json
 import smtplib
+import datetime
 from email.mime.text import MIMEText
 sender = 'fabius8@aliyun.com'
 receivers = ['fabius888@163.com']
@@ -89,13 +90,15 @@ def monitor():
 
         if len(df) < 21:
             continue
+        if str(df['date'][20]).find("2019") == -1:
+            continue
         price = df['close'][20]
         N = ATR(df['high'][1:20], df['low'][1:20], df['close'][1:20])
         if N == 0:
             continue
         highest = df['high'][0:19].max()
         lowest = df['low'][0:19].min()
-        print(i, price, highest, lowest)
+        print(i, df['date'][20], price, highest, lowest)
         positionSizePercent = price / N
         positionSize = 10000 * 0.01 / N
         if price > highest:
