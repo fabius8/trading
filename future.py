@@ -93,12 +93,12 @@ def monitor():
         if str(df['date'][20]).find("2019") == -1:
             continue
         price = df['close'][20]
-        N = ATR(df['high'][1:20], df['low'][1:20], df['close'][1:20])
+        N = ATR(df['high'][1:21], df['low'][1:21], df['close'][1:21])
         if N == 0:
             continue
-        highest = df['high'][0:19].max()
-        lowest = df['low'][0:19].min()
-        print(i, df['date'][20], price, highest, lowest)
+        highest = df['high'][0:20].max()
+        lowest = df['low'][0:20].min()
+        print(i, df['date'][20], price, highest, lowest, N)
         positionSizePercent = price / N
         positionSize = 10000 * 0.01 / N
         if price > highest:
