@@ -116,5 +116,5 @@ def monitor():
 if __name__ == '__main__':
     while True:
         monitor()
-        time.sleep(60)
+        time.sleep(120)
 
