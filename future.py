@@ -6,7 +6,7 @@ import smtplib
 import datetime
 from email.mime.text import MIMEText
 sender = 'fabius8@aliyun.com'
-receivers = ['fabius888@163.com']
+receivers = ['fabius8@aliyun.com']
 
 cds = json.load(open("jq_config.json"))
 auth = json.load(open("auth.json"))
