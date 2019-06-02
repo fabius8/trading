@@ -11,7 +11,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
 sender = 'fabius8@aliyun.com'
-receivers = ['fabius8@aliyun.com', 'bhua.zh@gmail.com']
+receivers = ['fabius888@163.com', 'bhua.zh@gmail.com']
 
 import matplotlib.pyplot as plt
 import pandas as pd
