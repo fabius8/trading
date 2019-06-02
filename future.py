@@ -62,7 +62,7 @@ def send_email(stock, indicator, freq, price, highest, lowest, N,
         elif indicator == "SHORT":
             subject = str(stock) + " " + indicator
         smtpObj = smtplib.SMTP_SSL('smtp.aliyun.com', 465)
-        # smtpObj.set_debuglevel(1)
+        #smtpObj.set_debuglevel(1)
         smtpObj.login(auth['username'], auth['password'])
         message['Subject'] = subject
         smtpObj.sendmail(sender, receivers, message.as_string())
@@ -84,6 +84,7 @@ def monitor():
             g_report[i] = 0
         if g_report[i] == 1 and g_report_interval[i] > 0:
             g_report_interval[i] -= 1
+            print("time wait")
             continue
 
         df = jqdatasdk.get_bars(i,
@@ -101,7 +102,6 @@ def monitor():
 
         if price == g_lastprice[i]:
             print("price not renew return")
-            g_lastprice[i] = price
             continue
         N = ATR(df['high'][1:21], df['low'][1:21], df['close'][1:21])
         if N == 0:
@@ -126,5 +126,6 @@ def monitor():
 if __name__ == '__main__':
     while True:
         monitor()
-        time.sleep(120)
+        time.sleep(60)
+        print("------------------")
 
