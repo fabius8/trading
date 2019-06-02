@@ -20,9 +20,12 @@ for i in futures.index:
 
 g_report = {}
 g_report_interval = {}
+g_lastprice = {}
 for i in dom_futures:
     g_report[i] = 0
-    g_report_interval[i] = 240
+    g_report_interval[i] = 120
+    # price must renew, else not report, less require data
+    g_lastprice[i] = 0.0
 
 
 def ATR(highs, lows, closes):
@@ -69,7 +72,8 @@ def send_email(stock, indicator, freq, price, highest, lowest, N,
         print("Send Mail Fail", e)
 
     g_report[stock] = 1
-    g_report_interval[stock] = 240
+    g_report_interval[stock] = 120
+    g_lastprice[stock] = price
 
 
 def monitor():
@@ -93,6 +97,12 @@ def monitor():
         if str(df['date'][20]).find("2019") == -1:
             continue
         price = df['close'][20]
+        print(price)
+
+        if price == g_lastprice[i]:
+            print("price not renew return")
+            g_lastprice[i] = price
+            continue
         N = ATR(df['high'][1:21], df['low'][1:21], df['close'][1:21])
         if N == 0:
             continue
