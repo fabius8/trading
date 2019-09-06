@@ -45,7 +45,7 @@ Contract = config["Contract"]
 futurePair = Base + '-' + Quote
 stockPair = Base + '/' + 'USDT'
 delay = 2
-basis_unit = 0.001
+basis_unit = 0.005
 old_amount = 0
 
 exchange = ccxt.okex3(config["okex"])
