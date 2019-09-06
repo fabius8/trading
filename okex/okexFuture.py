@@ -17,10 +17,10 @@ def beep():
 
 
 def send_email(basis, futurePrice, stockPrice):
-    print("send_email")
-    text = 'Basis: ' + str(basis)
-    text = '\nFuture Price: ' + str(futurePrice)
-    text = '\nStock Price: ' + str(stockPrice)
+    print("send_email\n")
+    text = 'Basis: ' + str(basis * 100) + '%'
+    text += '\nFuture Price: ' + str(futurePrice)
+    text += '\nStock Price: ' + str(stockPrice)
 
     message = MIMEText(text, 'plain', 'utf-8')
     message['From'] = sender
@@ -44,9 +44,9 @@ Quote = config["Quote"]
 Contract = config["Contract"]
 futurePair = Base + '-' + Quote
 stockPair = Base + '/' + 'USDT'
-delay = 2
-basis_unit = 0.005
-old_amount = 0
+delay = 5
+basis_change = 0.001
+old_basis = 0
 
 exchange = ccxt.okex3(config["okex"])
 exchange.load_markets()
@@ -63,10 +63,10 @@ while True:
     orderBookStock = exchange.fetch_order_book(stockPair)
     basis = (orderBookFuture['bids'][0][0] - orderBookStock['bids'][0][0]) / orderBookStock['bids'][0][0]
     basis = (int(basis * 10000))/10000
-    new_amount = (basis * 10000) / basis_unit
-    if new_amount != old_amount and old_amount != 0:
+    if abs(abs(basis) - abs(old_basis)) > basis_change:
         print("BTC price is changing quickly!")
-        old_amount = new_amount
+        old_basis = basis
+        send_email(basis, orderBookFuture['bids'][0][0], orderBookStock['bids'][0][0])
     print(basis)
 
 
