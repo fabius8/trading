@@ -16,17 +16,23 @@ def beep():
     print("\a\a\a\a\a")
 
 
-def send_email(basis, futurePrice, stockPrice):
+def send_email(basis, basis_threshold, futurePrice, stockPrice,
+               fundingRate, estimatedRate,
+               estimatedRate_threshold):
     print("send_email\n")
-    text = 'Basis: ' + str(basis * 100) + '%'
+    text = 'Basis: ' + str(basis)
+    text += '\nThreshold: ' + str(basis_threshold * 100) + '%'
     text += '\nFuture Price: ' + str(futurePrice)
     text += '\nStock Price: ' + str(stockPrice)
+    text += '\nFunding Rate: ' + str(fundingRate)
+    text += '\nEstimate Rate: ' + str(estimatedRate)
+    text += '\nEstimate Threshold: ' + str(estimatedRate_threshold * 100) + '%'
 
     message = MIMEText(text, 'plain', 'utf-8')
     message['From'] = sender
     message['To'] = ",".join(receivers)
     try:
-        subject = "BTC price changing quickly!"
+        subject = "BTC ALERT!"
         smtpObj = smtplib.SMTP_SSL('smtp.aliyun.com', 465)
         # smtpObj.set_debuglevel(1)
         smtpObj.login(auth['username'], auth['password'])
@@ -45,8 +51,11 @@ Contract = config["Contract"]
 futurePair = Base + '-' + Quote
 stockPair = Base + '/' + 'USDT'
 delay = 5
-basis_change = 0.001
+# 10% price change
+basis_threshold = 0.0001
 old_basis = 0
+estimatedRate_threshold = 0.0001
+old_estimatedRate = 0
 
 exchange = ccxt.okex3(config["okex"])
 exchange.load_markets()
@@ -59,17 +68,25 @@ for symbol in exchange.markets:
 
 while True:
     time.sleep(delay)
+    fundingRate = exchange.swapGetInstrumentsInstrumentIdFundingTime({'instrument_id': 'BTC-USD-SWAP'})
+    estimatedRate = float(int(float(fundingRate['estimated_rate'])*100000))/100000
+    if old_estimatedRate == 0:
+        old_estimatedRate = estimatedRate
     orderBookFuture = exchange.fetch_order_book(futurePair)
     orderBookStock = exchange.fetch_order_book(stockPair)
-    basis = (orderBookFuture['bids'][0][0] - orderBookStock['bids'][0][0]) / orderBookStock['bids'][0][0]
-    basis = (int(basis * 10000))/10000
-    if abs(abs(basis) - abs(old_basis)) > basis_change:
-        print("BTC price is changing quickly!")
+    basis = orderBookFuture['bids'][0][0] - orderBookStock['bids'][0][0]
+    basis = int(basis)
+    if old_basis == 0:
         old_basis = basis
-        send_email(basis, orderBookFuture['bids'][0][0], orderBookStock['bids'][0][0])
+    if abs(abs(basis) - abs(old_basis))/abs(old_basis) > basis_threshold or abs(abs(estimatedRate) - abs(old_estimatedRate)) / abs(old_estimatedRate) > estimatedRate_threshold:
+        print("BTC Alert!")
+        old_basis = basis
+        old_estimateRate = estimatedRate
+        send_email(basis,
+                   basis_threshold,
+                   orderBookFuture['bids'][0][0],
+                   orderBookStock['bids'][0][0],
+                   fundingRate['funding_rate'],
+                   estimatedRate,
+                   estimatedRate_threshold)
     print(basis)
-
-
-
-
-
