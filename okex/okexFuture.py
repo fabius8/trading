@@ -52,9 +52,9 @@ futurePair = Base + '-' + Quote
 stockPair = Base + '/' + 'USDT'
 delay = 5
 # 10% price change
-basis_threshold = 0.0001
+basis_threshold = 0.1
 old_basis = 0
-estimatedRate_threshold = 0.0001
+estimatedRate_threshold = 0.1
 old_estimatedRate = 0
 
 exchange = ccxt.okex3(config["okex"])
