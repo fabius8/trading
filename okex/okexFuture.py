@@ -79,8 +79,8 @@ while True:
     if old_basis == -1:
         old_basis = basis
 
-    basis_change = abs(abs(basis) - abs(old_basis))/abs(old_basis)
-    estimatedRate_change = abs(abs(estimatedRate) - abs(old_estimatedRate)) / abs(old_estimatedRate)
+    basis_change = (basis - old_basis) / old_basis
+    estimatedRate_change = (estimatedRate - old_estimatedRate) / old_estimatedRate
 
     print(old_basis, basis)
     print("basis change ", basis_change * 100, "%")
@@ -88,7 +88,7 @@ while True:
     print("estimatedRate change ", estimatedRate_change * 100, "%")
     print(" ")
 
-    if basis_change > basis_threshold or estimatedRate_change > estimatedRate_threshold:
+    if abs(basis_change) > basis_threshold or abs(estimatedRate_change) > estimatedRate_threshold:
         send_email(basis,
                    basis_threshold,
                    orderBookFuture['bids'][0][0],
