@@ -67,6 +67,7 @@ for symbol in exchange.markets:
             break
 
 while True:
+    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
     time.sleep(delay)
     fundingRate = exchange.swapGetInstrumentsInstrumentIdFundingTime({'instrument_id': 'BTC-USD-SWAP'})
     estimatedRate = float(int(float(fundingRate['estimated_rate'])*100000))/100000
