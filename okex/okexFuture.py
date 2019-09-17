@@ -53,9 +53,9 @@ stockPair = Base + '/' + 'USDT'
 delay = 5
 # 10% price change
 basis_threshold = 0.20
-old_basis = 0
+old_basis = -1
 estimatedRate_threshold = 0.20
-old_estimatedRate = 0
+old_estimatedRate = -1
 
 exchange = ccxt.okex3(config["okex"])
 exchange.load_markets()
@@ -70,18 +70,25 @@ while True:
     time.sleep(delay)
     fundingRate = exchange.swapGetInstrumentsInstrumentIdFundingTime({'instrument_id': 'BTC-USD-SWAP'})
     estimatedRate = float(int(float(fundingRate['estimated_rate'])*100000))/100000
-    if old_estimatedRate == 0:
+    if old_estimatedRate == -1:
         old_estimatedRate = estimatedRate
     orderBookFuture = exchange.fetch_order_book(futurePair)
     orderBookStock = exchange.fetch_order_book(stockPair)
     basis = orderBookFuture['bids'][0][0] - orderBookStock['bids'][0][0]
     basis = int(basis)
-    if old_basis == 0:
+    if old_basis == -1:
         old_basis = basis
-    if abs(abs(basis) - abs(old_basis))/abs(old_basis) > basis_threshold or abs(abs(estimatedRate) - abs(old_estimatedRate)) / abs(old_estimatedRate) > estimatedRate_threshold:
-        print("BTC Alert!")
-        old_basis = basis
-        old_estimateRate = estimatedRate
+
+    basis_change = abs(abs(basis) - abs(old_basis))/abs(old_basis)
+    estimatedRate_change = abs(abs(estimatedRate) - abs(old_estimatedRate)) / abs(old_estimatedRate)
+
+    print(old_basis, basis)
+    print("basis change ", basis_change * 100, "%")
+    print(old_estimatedRate, estimatedRate)
+    print("estimatedRate change ", estimatedRate_change * 100, "%")
+    print(" ")
+
+    if basis_change > basis_threshold or estimatedRate_change > estimatedRate_threshold:
         send_email(basis,
                    basis_threshold,
                    orderBookFuture['bids'][0][0],
@@ -89,4 +96,5 @@ while True:
                    fundingRate['funding_rate'],
                    estimatedRate,
                    estimatedRate_threshold)
-    print(basis)
+        old_basis = basis
+        old_estimatedRate = estimatedRate
