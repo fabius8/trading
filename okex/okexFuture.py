@@ -71,10 +71,11 @@ while True:
     time.sleep(delay)
     try:
         fundingRate = exchange.swapGetInstrumentsInstrumentIdFundingTime({'instrument_id': 'BTC-USD-SWAP'})
+        estimatedRate = float(int(float(fundingRate['estimated_rate'])*100000))/100000
     except:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting")
         continue
-    estimatedRate = float(int(float(fundingRate['estimated_rate'])*100000))/100000
+
     if old_estimatedRate == -1:
         old_estimatedRate = estimatedRate
     try:
@@ -89,8 +90,12 @@ while True:
     if old_basis == -1:
         old_basis = basis
 
-    basis_change = (basis - old_basis) / old_basis
-    estimatedRate_change = (estimatedRate - old_estimatedRate) / old_estimatedRate
+    try:
+        basis_change = (basis - old_basis) / old_basis
+        estimatedRate_change = (estimatedRate - old_estimatedRate) / old_estimatedRate
+    except:
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting")
+        continue
 
     print(old_basis, basis)
     print("basis change ", basis_change * 100, "%")
