@@ -69,12 +69,21 @@ for symbol in exchange.markets:
 while True:
     print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
     time.sleep(delay)
-    fundingRate = exchange.swapGetInstrumentsInstrumentIdFundingTime({'instrument_id': 'BTC-USD-SWAP'})
+    try:
+        fundingRate = exchange.swapGetInstrumentsInstrumentIdFundingTime({'instrument_id': 'BTC-USD-SWAP'})
+    except:
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting")
+        continue
     estimatedRate = float(int(float(fundingRate['estimated_rate'])*100000))/100000
     if old_estimatedRate == -1:
         old_estimatedRate = estimatedRate
-    orderBookFuture = exchange.fetch_order_book(futurePair)
-    orderBookStock = exchange.fetch_order_book(stockPair)
+    try:
+        orderBookFuture = exchange.fetch_order_book(futurePair)
+        orderBookStock = exchange.fetch_order_book(stockPair)
+    except:
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting")
+        continue
+
     basis = orderBookFuture['bids'][0][0] - orderBookStock['bids'][0][0]
     basis = int(basis)
     if old_basis == -1:
@@ -90,6 +99,7 @@ while True:
     print(" ")
 
     if abs(basis_change) > basis_threshold or abs(estimatedRate_change) > estimatedRate_threshold:
+        beep()
         send_email(basis,
                    basis_threshold,
                    orderBookFuture['bids'][0][0],
