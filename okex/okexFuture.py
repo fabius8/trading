@@ -72,8 +72,8 @@ while True:
     try:
         fundingRate = exchange.swapGetInstrumentsInstrumentIdFundingTime({'instrument_id': 'BTC-USD-SWAP'})
         estimatedRate = float(int(float(fundingRate['estimated_rate'])*100000))/100000
-    except:
-        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting")
+    except Exception as result:
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting", result)
         continue
 
     if old_estimatedRate == -1 or old_estimatedRate == 0:
@@ -81,8 +81,8 @@ while True:
     try:
         orderBookFuture = exchange.fetch_order_book(futurePair)
         orderBookStock = exchange.fetch_order_book(stockPair)
-    except:
-        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting")
+    except Exception as result:
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting", result)
         continue
 
     basis = orderBookFuture['bids'][0][0] - orderBookStock['bids'][0][0]
@@ -93,8 +93,8 @@ while True:
     try:
         basis_change = (basis - old_basis) / old_basis
         estimatedRate_change = (estimatedRate - old_estimatedRate) / old_estimatedRate
-    except:
-        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting")
+    except Exception as result:
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting", result)
         continue
 
     print(old_basis, basis)
@@ -105,12 +105,17 @@ while True:
 
     if abs(basis_change) > basis_threshold or abs(estimatedRate_change) > estimatedRate_threshold:
         beep()
-        send_email(basis,
-                   basis_threshold,
-                   orderBookFuture['bids'][0][0],
-                   orderBookStock['bids'][0][0],
-                   fundingRate['funding_rate'],
-                   estimatedRate,
-                   estimatedRate_threshold)
+        try:
+            send_email(basis,
+                       basis_threshold,
+                       orderBookFuture['bids'][0][0],
+                       orderBookStock['bids'][0][0],
+                       fundingRate['funding_rate'],
+                       estimatedRate,
+                       estimatedRate_threshold)
+        except Exception as result:
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting", result)
+            continue
+
         old_basis = basis
         old_estimatedRate = estimatedRate
