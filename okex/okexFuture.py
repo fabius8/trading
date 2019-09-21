@@ -76,7 +76,7 @@ while True:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting")
         continue
 
-    if old_estimatedRate == -1:
+    if old_estimatedRate == -1 or old_estimatedRate == 0:
         old_estimatedRate = estimatedRate
     try:
         orderBookFuture = exchange.fetch_order_book(futurePair)
