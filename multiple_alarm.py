@@ -90,9 +90,7 @@ def handle_data(context, data):
         return
 
     for stock in context.stocks:
-        if context.report[stock] != 0 and context.report_interval[stock] == 0:
-            context.report[stock] = 0
-        if context.report[stock] != 0 and context.report_interval[stock] > 0:
+        if context.report_interval[stock] > 0:
             context.report_interval[stock] -= 1
             continue
         try:
