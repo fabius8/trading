@@ -87,7 +87,7 @@ while True:
 
     basis = orderBookFuture['bids'][0][0] - orderBookStock['bids'][0][0]
     basis = int(basis)
-    if old_basis == -1:
+    if old_basis == -1 or old_basis == 0:
         old_basis = basis
 
     try:
