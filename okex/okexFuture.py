@@ -97,8 +97,9 @@ while True:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting", result)
         continue
 
+    print("future price: ", orderBookFuture['bids'][0][0])
     print(old_basis, basis)
-    print("basis change ", basis_change * 100, "%")
+    print("basis change", basis_change * 100, "%")
     print(old_estimatedRate, estimatedRate)
     print("estimatedRate change ", estimatedRate_change * 100, "%")
     print(" ")
