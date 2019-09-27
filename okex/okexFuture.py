@@ -32,7 +32,7 @@ def send_email(basis, basis_threshold, futurePrice, stockPrice,
     message['From'] = sender
     message['To'] = ",".join(receivers)
     try:
-        subject = "okex future change " + str(basis)
+        subject = "okex basis " + str(basis) + "price " + str(futurePrice)
         smtpObj = smtplib.SMTP_SSL('smtp.aliyun.com', 465)
         # smtpObj.set_debuglevel(1)
         smtpObj.login(auth['username'], auth['password'])
