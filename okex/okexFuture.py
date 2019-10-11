@@ -7,12 +7,20 @@ import smtplib
 
 from email.mime.text import MIMEText
 from email.header import Header
+
 sender = 'fabius8@aliyun.com'
 receivers = ['fabius888@163.com']
 auth = json.load(open("auth.json"))
 
 
+from datetime import datetime
+#timestr = '2019-10-10 15:33:00'
+#datetime_obj = datetime.strptime(timestr, "%Y-%m-%d %H:%M:%S")
+#stamp = int(time.mktime(datetime_obj.timetuple()) * 1000.0 + datetime_obj.microsecond / 1000.0)
+
 def beep():
+    print("\a\a\a\a\a")
+    time.sleep(1)
     print("\a\a\a\a\a")
 
 
@@ -42,6 +50,7 @@ def send_email(basis, basis_threshold, futurePrice, stockPrice,
         smtpObj.close()
     except smtplib.SMTPException as e:
         print("Send Mail Fail", e)
+    time.sleep(30)
 
 
 config = json.load(open('config.json'))
@@ -66,15 +75,31 @@ for symbol in exchange.markets:
             futurePair = market['symbol']
             break
 
+n = 10
+
 while True:
     print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
     time.sleep(delay)
     try:
         fundingRate = exchange.swapGetInstrumentsInstrumentIdFundingTime({'instrument_id': 'BTC-USD-SWAP'})
         estimatedRate = float(int(float(fundingRate['estimated_rate'])*100000))/100000
+        bars = exchange.fetch_ohlcv(futurePair, '15m', None, n)
     except Exception as result:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting", result)
         continue
+
+    isfound = 1
+
+    for i in range(0, n-1):
+        print("volume:", bars[n-1][5], bars[n-2-i][5])
+        if bars[n-1][5] < bars[n-2-i][5]:
+            isfound = 0
+            break
+        #print(bars[n-1])
+        #print(bars[n-2-i])
+        #if (not (bars[n-1][2] > bars[n-2-i][2] and bars[n-1][4] < bars[n-1][1])) and (not (bars[n-1][3] < bars[n-2-i][3] and bars[n-1][4] > bars[n-1][1])):
+        #    isfound = 0
+        #    break
 
     if old_estimatedRate == -1 or old_estimatedRate == 0:
         old_estimatedRate = estimatedRate
@@ -91,8 +116,14 @@ while True:
         old_basis = basis
 
     try:
-        basis_change = (basis - old_basis) / old_basis
-        estimatedRate_change = (estimatedRate - old_estimatedRate) / old_estimatedRate
+        if old_basis != 0:
+            basis_change = (basis - old_basis) / old_basis
+        else:
+            basis_change = 0
+        if old_estimatedRate != 0:
+            estimatedRate_change = (estimatedRate - old_estimatedRate) / old_estimatedRate
+        else:
+            estimatedRate_change = 0
     except Exception as result:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting", result)
         continue
@@ -104,7 +135,8 @@ while True:
     print("estimatedRate change ", estimatedRate_change * 100, "%")
     print(" ")
 
-    if abs(basis_change) > basis_threshold or abs(estimatedRate_change) > estimatedRate_threshold:
+    #if abs(basis_change) > basis_threshold or abs(estimatedRate_change) > estimatedRate_threshold or isfound == 1:
+    if isfound == 1:
         beep()
         try:
             send_email(basis,
