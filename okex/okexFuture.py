@@ -4,6 +4,7 @@ import sys
 import time
 import ccxt
 import smtplib
+import os
 
 from email.mime.text import MIMEText
 from email.header import Header
@@ -40,7 +41,7 @@ def send_email(basis, basis_threshold, futurePrice, stockPrice,
     message['From'] = sender
     message['To'] = ",".join(receivers)
     try:
-        subject = "okex basis " + str(basis) + "price " + str(futurePrice)
+        subject = "okex basis " + str(basis) + " price " + str(futurePrice)
         smtpObj = smtplib.SMTP_SSL('smtp.aliyun.com', 465)
         # smtpObj.set_debuglevel(1)
         smtpObj.login(auth['username'], auth['password'])
@@ -50,7 +51,7 @@ def send_email(basis, basis_threshold, futurePrice, stockPrice,
         smtpObj.close()
     except smtplib.SMTPException as e:
         print("Send Mail Fail", e)
-    time.sleep(30)
+    time.sleep(300)
 
 
 config = json.load(open('config.json'))
@@ -69,7 +70,7 @@ old_estimatedRate = -1
 exchange = ccxt.okex3(config["okex"])
 exchange.load_markets()
 for symbol in exchange.markets:
-    if futurePair in symbol and symbol != futurePair + '-' + 'SWAP':
+    if futurePair in symbol:
         market = exchange.markets[symbol]
         if market['info']['alias'] == 'quarter':
             futurePair = market['symbol']
@@ -85,7 +86,7 @@ while True:
         estimatedRate = float(int(float(fundingRate['estimated_rate'])*100000))/100000
         bars = exchange.fetch_ohlcv(futurePair, '15m', None, n)
     except Exception as result:
-        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting", result)
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting0", result)
         continue
 
     isfound = 1
@@ -107,7 +108,7 @@ while True:
         orderBookFuture = exchange.fetch_order_book(futurePair)
         orderBookStock = exchange.fetch_order_book(stockPair)
     except Exception as result:
-        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting", result)
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting1", result)
         continue
 
     basis = orderBookFuture['bids'][0][0] - orderBookStock['bids'][0][0]
@@ -137,6 +138,7 @@ while True:
 
     #if abs(basis_change) > basis_threshold or abs(estimatedRate_change) > estimatedRate_threshold or isfound == 1:
     if isfound == 1:
+        os.system("say big volume")
         beep()
         try:
             send_email(basis,
