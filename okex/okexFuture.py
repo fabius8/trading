@@ -13,7 +13,6 @@ sender = 'fabius8@aliyun.com'
 receivers = ['fabius888@163.com']
 auth = json.load(open("auth.json"))
 
-
 from datetime import datetime
 #timestr = '2019-10-10 15:33:00'
 #datetime_obj = datetime.strptime(timestr, "%Y-%m-%d %H:%M:%S")
@@ -138,7 +137,7 @@ while True:
 
     #if abs(basis_change) > basis_threshold or abs(estimatedRate_change) > estimatedRate_threshold or isfound == 1:
     if isfound == 1:
-        os.system("say big volume")
+        os.system("spd-say \"big volume\"")
         beep()
         try:
             send_email(basis,
@@ -149,7 +148,9 @@ while True:
                        estimatedRate,
                        estimatedRate_threshold)
         except Exception as result:
-            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... restarting", result)
+            old_basis = basis
+            old_estimatedRate = estimatedRate
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "oops... send mail failed!", result)
             continue
 
         old_basis = basis
