@@ -72,7 +72,7 @@ def send_email(stock, indicator, freq, price, highest, lowest, N,
     except smtplib.SMTPException as e:
         print("Send Mail Fail", e)
 
-    context.report[stock] = 1
+    context.report[stock] = indicator
     context.report_interval[stock] = 240
 
 def ATR(highs, lows, closes):
@@ -90,9 +90,7 @@ def handle_data(context, data):
         return
 
     for stock in context.stocks:
-        if context.report[stock] == 1 and context.report_interval[stock] == 0:
-            context.report[stock] = 0
-        if context.report[stock] == 1 and context.report_interval[stock] > 0:
+        if context.report_interval[stock] > 0:
             context.report_interval[stock] -= 1
             continue
         try:
@@ -127,13 +125,13 @@ def handle_data(context, data):
 
         positionSizePercent = price / N
         positionSize = 23000 * 0.01 / N
-        if price > highest:
+        if price > highest and context.report[stock] != "LONG":
             indicator = "LONG"
             send_email(stock, indicator, context.freq,
                        price, highest, lowest, N,
                        positionSizePercent, positionSize,
                        context)
-        elif price < lowest:
+        elif price < lowest and context.report[stock] != "SHORT":
             indicator = "SHORT"
             send_email(stock, indicator, context.freq,
                        price, highest, lowest, N,
