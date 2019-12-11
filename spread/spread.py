@@ -51,6 +51,7 @@ while True:
             marginRatio_B = 1 / float(balance_B["info"]["info"]['btc']['margin_ratio']) / 100
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   B.id.ljust(7), "marginRatio:", "%3.4f" %marginRatio_B)
+            time.sleep(1)
             AopenOrders = A.fetchOpenOrders(symbol=A_pair)
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   A.id.ljust(7), AopenOrders)
