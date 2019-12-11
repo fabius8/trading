@@ -41,6 +41,9 @@ count = 0
 while True:
     try:
         if count % 100 == 0:
+            time.sleep(5)
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                  "get balance")
             balance_A = A.fetchBalance()
             marginRatio_A = float(balance_A["info"]["totalMaintMargin"])/ \
                             float(balance_A["info"]["totalMarginBalance"])
@@ -60,7 +63,7 @@ while True:
                   B.id.ljust(7), BopenOrders)
 
         count += 1
-        time.sleep(2)
+        time.sleep(3)
         order_book_A = A.fetch_order_book(A_pair)
         bid0_price_A = order_book_A['bids'][0][0]
         bid0_amount_A = order_book_A['bids'][0][1]
@@ -96,7 +99,7 @@ while True:
               "Buy", A.id.ljust(7), "-> Sell", B.id.ljust(7), "%+.4f" %BaskAbid_spread)
 
         #if AaskBbid_spread > float(Spread_threshold):
-        if True:
+        if False:
             AaskBbid_amount = min(bid0_amount_A, ask0_amount_B, biggest_amount)
             #Aask = A.createLimitSellOrder(A_pair, AaskBbid_amount, bid0_price_A)
             #Bbid = B.createLimitBuyOrder(B_pair, AaskBbid_amount, ask0_price_B)
@@ -108,4 +111,4 @@ while True:
 
 
     except Exception as err:
-        print(err)
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), err)
