@@ -51,7 +51,7 @@ while True:
                   A.id.ljust(7), "marginRatio:", "%3.4f" %marginRatio_A)
 
             balance_B = B.fetchBalance()
-            marginRatio_B = 1 / (1 + float(balance_B["info"]["info"]['btc']['margin_ratio'])) / 100
+            marginRatio_B = 1 / (1 + float(balance_B["info"]["info"]['btc']['margin_ratio']))
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   B.id.ljust(7), "marginRatio:", "%3.4f" %marginRatio_B)
             time.sleep(1)
