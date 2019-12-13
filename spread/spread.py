@@ -11,6 +11,7 @@ Base = config["Base"]
 Quote = config["Quote"]
 Contract = config["Contract"]
 Spread_threshold = config["Spread_threshold"]
+Min_MarginRatio = config["Min_MarginRatio"]
 biggest_amount = 0.2
 side = 0
 
@@ -44,16 +45,27 @@ while True:
             time.sleep(5)
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   "get balance")
+            # marginRatio A
             balance_A = A.fetchBalance()
             marginRatio_A = float(balance_A["info"]["totalMaintMargin"])/ \
                             float(balance_A["info"]["totalMarginBalance"])
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   A.id.ljust(7), "marginRatio:", "%3.4f" %marginRatio_A)
 
+            # marginRatio B
             balance_B = B.fetchBalance()
-            marginRatio_B = 1 / (1 + float(balance_B["info"]["info"]['btc']['margin_ratio']))
+            marginRisk_B = 1 - float(balance_B["info"]["info"]['btc']['margin_ratio'])
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  B.id.ljust(7), "marginRatio:", "%3.4f" %marginRatio_B)
+                  B.id.ljust(7), "marginRisk:", "%3.4f" %marginRisk_B)
+
+            # trade available Amount BTC
+            order_book_B = B.fetch_order_book(B_pair)
+            bid0_price_B = order_book_B['bids'][0][0]
+            trade_availableAmount_B = ((float(balance_B["info"]["info"]['btc']['equity']) / Min_MarginRatio) / \
+                                      10 - float(balance_B["info"]["info"]['btc']['margin_frozen']))
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                  B.id.ljust(7), "available amount:", "%3.4f" %trade_availableAmount_B)
+
             time.sleep(1)
             AopenOrders = A.fetchOpenOrders(symbol=A_pair)
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
@@ -100,14 +112,16 @@ while True:
 
         #if AaskBbid_spread > float(Spread_threshold):
         if False:
-            AaskBbid_amount = min(bid0_amount_A, ask0_amount_B, biggest_amount)
-            #Aask = A.createLimitSellOrder(A_pair, AaskBbid_amount, bid0_price_A)
+            AaskBbid_amount = min(bid0_amount_A, ask0_amount_B, biggest_amount, trade_availableAmount_B)
+            Aask = A.createLimitSellOrder(A_pair, AaskBbid_amount, bid0_price_A)
             #Bbid = B.createLimitBuyOrder(B_pair, AaskBbid_amount, ask0_price_B)
             Bbid = B.create_order(B_pair, "limit", "buy", 1, 6600)
             #print(Aask)
             print(Bbid)
 
         #if BaskAbid_spread > float(Spread_threshold):
+        if False:
+            print()
 
 
     except Exception as err:
