@@ -1,0 +1,28 @@
+{
+    "okex": {
+        "apiKey": "",
+        "secret": "",
+        "password": "",
+        "urls": {
+            "api": "https://www.okex.me",
+            "www": "https://www.okex.me"
+        },
+        "enableRateLimit": true,
+        "options": {
+            "defaultType": "futures"
+        }
+    },
+    "binance": {
+        "proxy": "https://cors-anywhere.herokuapp.com/",
+        "apiKey": "",
+        "secret": "",
+        "enableRateLimit": true,
+        "options": {
+            "defaultType": "future"
+        }
+    },
+    "Spread_threshold": "0.01",
+    "Base": "BTC",
+    "Quote": "USD",
+    "Contract": "quarter"
+}

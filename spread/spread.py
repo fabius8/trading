@@ -63,7 +63,7 @@ while True:
                   B.id.ljust(7), BopenOrders)
 
         count += 1
-        time.sleep(3)
+        time.sleep(30)
         order_book_A = A.fetch_order_book(A_pair)
         bid0_price_A = order_book_A['bids'][0][0]
         bid0_amount_A = order_book_A['bids'][0][1]
