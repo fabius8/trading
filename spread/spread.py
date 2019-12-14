@@ -20,7 +20,7 @@ open_long = 1
 open_short = 2
 close_long = 3
 close_short = 4
-
+hit = 0
 
 A = ccxt.binance(config["binance"])
 B = ccxt.okex3(config["okex"])
@@ -125,9 +125,11 @@ while True:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
               "Buy", A.id.ljust(7), "-> Sell", B.id.ljust(7), "%+.4f" %BaskAbid_spread)
 
-        # TODO smallest trade
-        #if AaskBbid_spread > Spread_threshold:
-        if False:
+        if AaskBbid_spread > Spread_threshold:
+            hit += 1
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), A.id.ljust(7),
+                  "sell", B.id.ljust(7), "buy", "spread:", AaskBbid_spread, "hit:", hit)
+            continue
             AaskBbid_amount = min(bid0_amount_A, ask0_amount_B, biggest_amount,
                                   trade_availableAmount_B, trade_availableAmount_A)
             if AaskBbid_amount < Min_trade_amount:
@@ -151,8 +153,11 @@ while True:
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), A.id.ljust(7),
                   "sell", B.id.ljust(7), "buy")
 
-        #if BaskAbid_spread > Spread_threshold:
-        if False:
+        if BaskAbid_spread > Spread_threshold:
+            hit += 1
+            continue
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), B.id.ljust(7),
+                  "sell", A.id.ljust(7), "buy", "spread:", BaskAbid_spread, "hit:", hit)
             BaskAbid_amount = min(ask0_amount_A, bid0_amount_B,, biggest_amount,
                                   trade_availableAmount_B, trade_availableAmount_A)
             if BaskAbid_amount < Min_trade_amount:
@@ -171,10 +176,6 @@ while True:
                                       bid0_price_B)
                 Bask = B.create_order(B_pair, open_short, "limit", "sell",
                                       bid_price_B)
-
-            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), B.id.ljust(7),
-                  "sell", A.id.ljust(7), "buy")
-
 
     except Exception as err:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), err)
