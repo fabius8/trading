@@ -67,6 +67,12 @@ while True:
                                       bid0_price_A
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   A.id.ljust(7), "available trade BTC amount:", "%3.4f" %trade_availableAmount_A)
+            sell_availAmount_A = trade_availableAmount_A
+            bid_availAmount_A = trade_availableAmount_A
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                  A.id.ljust(7),
+                  "sell available BTC amount:", "%3.4f" %sell_availAmount_A,
+                  "bid available BTC amount:", "%3.4f" %bid_availAmount_A)
 
             # marginRatio B
             balance_B = B.fetchBalance()
@@ -80,6 +86,15 @@ while True:
                                        - float(balance_B["info"]["info"]['btc']['margin_frozen']))
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   B.id.ljust(7), "available trade BTC amount:", "%3.4f" %trade_availableAmount_B)
+            position_B = B.futures_get_instrument_id_position({"instrument_id": B_pair})
+            hold_long_avail_qty_B = float(position_B["holding"][0]["long_avail_qty"])
+            hold_short_avail_qty_B = float(position_B["holding"][0]["short_avail_qty"])
+            sell_availAmount_B = trade_availableAmount_B + hold_long_avail_qty_B
+            bid_availAmount_B = trade_availableAmount_B + hold_short_avail_qty_B
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                  B.id.ljust(7),
+                  "sell available BTC amount:", "%3.4f" %sell_availAmount_B,
+                  "bid available BTC amount:", "%3.4f" %bid_availAmount_B)
 
             time.sleep(1)
             AopenOrders = A.fetchOpenOrders(symbol=A_pair)
@@ -121,9 +136,9 @@ while True:
         AaskBbid_spread = (ask0_price_A - bid0_price_B)/bid0_price_B
         BaskAbid_spread = (ask0_price_B - bid0_price_A)/bid0_price_A
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-              "Buy", B.id.ljust(7), "-> Sell", A.id.ljust(7), "%+.4f" %AaskBbid_spread)
+              B.id.ljust(7), "->", A.id.ljust(7), "%+.4f" %AaskBbid_spread)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-              "Buy", A.id.ljust(7), "-> Sell", B.id.ljust(7), "%+.4f" %BaskAbid_spread)
+              A.id.ljust(7), "->", B.id.ljust(7), "%+.4f" %BaskAbid_spread)
 
         if AaskBbid_spread > Spread_threshold:
             hit += 1
@@ -158,7 +173,7 @@ while True:
             continue
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), B.id.ljust(7),
                   "sell", A.id.ljust(7), "buy", "spread:", BaskAbid_spread, "hit:", hit)
-            BaskAbid_amount = min(ask0_amount_A, bid0_amount_B,, biggest_amount,
+            BaskAbid_amount = min(ask0_amount_A, bid0_amount_B, biggest_amount,
                                   trade_availableAmount_B, trade_availableAmount_A)
             if BaskAbid_amount < Min_trade_amount:
                 print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),

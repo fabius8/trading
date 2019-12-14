@@ -23,7 +23,7 @@
     },
     "Spread_threshold": 0.01,
     "Min_MarginRatio": 0.3,
-    "min_trade_amount": 0.02,
+    "Min_trade_amount": 0.02,
     "Base": "BTC",
     "Quote": "USD",
     "Contract": "quarter"
