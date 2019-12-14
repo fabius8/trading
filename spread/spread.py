@@ -16,6 +16,9 @@ Min_trade_amount = config["Min_trade_amount"]
 biggest_amount = 0.2
 side = 0
 
+long_amount_A = 0
+short_amount_A = 0
+
 open_long = 1
 open_short = 2
 close_long = 3
@@ -50,7 +53,7 @@ while True:
         if count % 100 == 0:
             time.sleep(5)
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  "get balance")
+                  "hit:", hit)
             # marginRatio A
             balance_A = A.fetchBalance()
             marginRatio_A = float(balance_A["info"]["totalMarginBalance"]) / \
@@ -67,12 +70,12 @@ while True:
                                       bid0_price_A
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   A.id.ljust(7), "available trade BTC amount:", "%3.4f" %trade_availableAmount_A)
-            sell_availAmount_A = trade_availableAmount_A
-            bid_availAmount_A = trade_availableAmount_A
+            sell_availAmount_A = trade_availableAmount_A * 10 + 2 * long_amount_A
+            buy_availAmount_A = trade_availableAmount_A * 10 + 2 * short_amount_A
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   A.id.ljust(7),
                   "sell available BTC amount:", "%3.4f" %sell_availAmount_A,
-                  "bid available BTC amount:", "%3.4f" %bid_availAmount_A)
+                  "buy available BTC amount:", "%3.4f" %buy_availAmount_A)
 
             # marginRatio B
             balance_B = B.fetchBalance()
@@ -89,12 +92,16 @@ while True:
             position_B = B.futures_get_instrument_id_position({"instrument_id": B_pair})
             hold_long_avail_qty_B = float(position_B["holding"][0]["long_avail_qty"])
             hold_short_avail_qty_B = float(position_B["holding"][0]["short_avail_qty"])
-            sell_availAmount_B = trade_availableAmount_B + hold_long_avail_qty_B
-            bid_availAmount_B = trade_availableAmount_B + hold_short_avail_qty_B
+            order_book_B = B.fetch_order_book(B_pair)
+            bid0_price_B = order_book_B['bids'][0][0]
+            sell_availAmount_B = trade_availableAmount_B * 10 + \
+                                 2 * hold_long_avail_qty_B * 100 / bid0_price_B
+            buy_availAmount_B = trade_availableAmount_B * 10 + \
+                                2 * hold_short_avail_qty_B * 100 / bid0_price_B
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   B.id.ljust(7),
                   "sell available BTC amount:", "%3.4f" %sell_availAmount_B,
-                  "bid available BTC amount:", "%3.4f" %bid_availAmount_B)
+                  "buy available BTC amount:", "%3.4f" %buy_availAmount_B)
 
             time.sleep(1)
             AopenOrders = A.fetchOpenOrders(symbol=A_pair)
@@ -146,7 +153,7 @@ while True:
                   "sell", B.id.ljust(7), "buy", "spread:", AaskBbid_spread, "hit:", hit)
             continue
             AaskBbid_amount = min(bid0_amount_A, ask0_amount_B, biggest_amount,
-                                  trade_availableAmount_B, trade_availableAmount_A)
+                                  sell_availAmount_A, buy_availAmount_B)
             if AaskBbid_amount < Min_trade_amount:
                 print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                       "Too small trade amount")
@@ -174,7 +181,7 @@ while True:
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), B.id.ljust(7),
                   "sell", A.id.ljust(7), "buy", "spread:", BaskAbid_spread, "hit:", hit)
             BaskAbid_amount = min(ask0_amount_A, bid0_amount_B, biggest_amount,
-                                  trade_availableAmount_B, trade_availableAmount_A)
+                                  sell_availAmount_B, buy_availAmount_A)
             if BaskAbid_amount < Min_trade_amount:
                 print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                       "Too small trade amount")
