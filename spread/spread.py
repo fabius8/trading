@@ -51,10 +51,10 @@ count = 0
 
 while True:
     try:
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+              "hit:", hit)
         if count % 5 == 0:
             time.sleep(5)
-            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  "hit:", hit)
             # marginRatio A
             balance_A = A.fetchBalance()
             marginRatio_A = float(balance_A["info"]["totalMarginBalance"]) / \
