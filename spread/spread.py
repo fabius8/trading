@@ -51,7 +51,7 @@ count = 0
 
 while True:
     try:
-        if count % 100 == 0:
+        if count % 5 == 0:
             time.sleep(5)
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   "hit:", hit)
@@ -107,10 +107,10 @@ while True:
             time.sleep(1)
             AopenOrders = A.fetchOpenOrders(symbol=A_pair)
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  A.id.ljust(7), AopenOrders)
+                  A.id.ljust(7), "order:", AopenOrders)
             BopenOrders = B.fetchOpenOrders(symbol=B_pair)
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  B.id.ljust(7), BopenOrders)
+                  B.id.ljust(7), "order:", BopenOrders)
 
         count += 1
         time.sleep(30)
