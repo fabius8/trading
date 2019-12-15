@@ -11,13 +11,14 @@ Base = config["Base"]
 Quote = config["Quote"]
 Contract = config["Contract"]
 Spread_threshold = config["Spread_threshold"]
+Close_threshold = config["Close_threshold"]
 Min_MarginRatio = config["Min_MarginRatio"]
 Min_trade_amount = config["Min_trade_amount"]
 biggest_amount = 0.2
 side = 0
 
 long_amount_A = 0
-short_amount_A = 0
+short_amount_A = 1
 
 open_long = 1
 open_short = 2
@@ -147,13 +148,15 @@ while True:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
               A.id.ljust(7), "->", B.id.ljust(7), "%+.4f" %BaskAbid_spread)
 
-        if AaskBbid_spread > Spread_threshold:
+        if BaskAbid_spread < Close_threshold:
             hit += 1
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), A.id.ljust(7),
                   "sell", B.id.ljust(7), "buy", "spread:", AaskBbid_spread, "hit:", hit)
             continue
             AaskBbid_amount = min(bid0_amount_A, ask0_amount_B, biggest_amount,
                                   sell_availAmount_A, buy_availAmount_B)
+            B_amount = int(AaskBbid_amount * bid0_price_B / 100)
+            AaskBbid_amount = B_amount * 100 / bid0_price_B
             if AaskBbid_amount < Min_trade_amount:
                 print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                       "Too small trade amount")
@@ -161,43 +164,47 @@ while True:
 
             position_B = B.futures_get_instrument_id_position({"instrument_id": B_pair})
             hold_short_avail_qty_B = float(position_B["holding"][0]["short_avail_qty"])
-            if hold_short_avail_qty_B * 100 / bid0_price_B > AaskBbid_amount:
+            if hold_short_avail_qty_B > B_amount:
                 Bbid = B.create_order(B_pair, close_short, "limit", "buy",
-                                      AaskBbid_amount*ask0_price_B/100,
+                                      B_amount,
                                       ask0_price_B)
             else:
                 Bbid = B.create_order(B_pair, close_short, "limit", "buy",
                                       hold_short_avail_qty_B,
                                       ask0_price_B)
                 Bbid = B.create_order(B_pair, open_long, "limit", "buy",
-                                      (AaskBbid_amount * bid0_price_B - hold_short_avail_qty_B * 100) / 100,
+                                      B_amount - hold_short_avail_qty_B,
                                       ask0_price_B)
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), A.id.ljust(7),
                   "sell", B.id.ljust(7), "buy")
 
         if BaskAbid_spread > Spread_threshold:
             hit += 1
-            continue
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), B.id.ljust(7),
                   "sell", A.id.ljust(7), "buy", "spread:", BaskAbid_spread, "hit:", hit)
+            continue
             BaskAbid_amount = min(ask0_amount_A, bid0_amount_B, biggest_amount,
                                   sell_availAmount_B, buy_availAmount_A)
+            B_amount = int(BaskAbid_amount * ask0_price_B / 100)
+            BaskAbid_amount = B_amount * 100 / ask0_price_B
             if BaskAbid_amount < Min_trade_amount:
                 print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                       "Too small trade amount")
             Abid = A.createLimitBuyOrder(A_pair, BaskAbid_amount, ask0_price_A)
+
             position_B = B.futures_get_instrument_id_position({"instrument_id": B_pair})
             hold_long_avail_qty_B = float(position_B["holding"][0]["long_avail_qty"])
-            if hold_long_avail_qty_B * 100 / bid0_price_B > BaskAbid_amount:
+            if hold_long_avail_qty_B > B_amount:
                 Bask = B.create_order(B_pair, close_long, "limit", "sell",
-                                      BaskAbid_amount*bid0_price_B/100,
+                                      B_amount,
                                       bid0_price_B)
             else:
                 Bask = B.create_order(B_pair, close_long, "limit", "sell",
                                       hold_long_avail_qty_B,
                                       bid0_price_B)
                 Bask = B.create_order(B_pair, open_short, "limit", "sell",
-                                      bid_price_B)
+                                      B_amount - hold_long_avail_qty_B,
+                                      bid0_price_B)
 
     except Exception as err:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), err)
