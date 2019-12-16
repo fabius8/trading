@@ -87,7 +87,9 @@ while True:
                                       float(balance_A["info"]["totalInitialMargin"])) / \
                                       bid0_price_A
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  A.id.ljust(7), "available trade BTC amount:", "%3.4f" %trade_availableAmount_A)
+                  A.id.ljust(7), "position:", 10*float(balance_A["info"]["totalInitialMargin"])/bid0_price_A)
+            # TODO position need binance api to update
+            short_amount_A = 10*float(balance_A["info"]["totalInitialMargin"])/bid0_price_A
             sell_availAmount_A = trade_availableAmount_A * 10 + 2 * long_amount_A
             buy_availAmount_A = trade_availableAmount_A * 10 + 2 * short_amount_A
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
@@ -105,13 +107,17 @@ while True:
             trade_availableAmount_B = (float(balance_B["info"]["info"]['btc']['equity']) / \
                                        Min_MarginRatio / 10 \
                                        - float(balance_B["info"]["info"]['btc']['margin_frozen']))
-            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  B.id.ljust(7), "available trade BTC amount:", "%3.4f" %trade_availableAmount_B)
             position_B = B.futures_get_instrument_id_position({"instrument_id": B_pair})
             hold_long_avail_qty_B = float(position_B["holding"][0]["long_avail_qty"])
             hold_short_avail_qty_B = float(position_B["holding"][0]["short_avail_qty"])
+            hold_long_qty_B = float(position_B["holding"][0]["long_qty"])
+            hold_short_qty_B = float(position_B["holding"][0]["short_qty"])
             order_book_B = B.fetch_order_book(B_pair)
             bid0_price_B = order_book_B['bids'][0][0]
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                  B.id.ljust(7),
+                  "position long:", hold_long_qty_B * 100 / bid0_price_B,
+                  "position short:", hold_short_qty_B * 100 / bid0_price_B)
             sell_availAmount_B = trade_availableAmount_B * 10 + \
                                  2 * hold_long_avail_qty_B * 100 / bid0_price_B
             buy_availAmount_B = trade_availableAmount_B * 10 + \
@@ -128,7 +134,10 @@ while True:
             profit = total_fund - init_balance
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   "Total USDT:", "%.1f" %total_fund,
-                  "Total BTC:", "%.3f" %(total_fund / bid0_price_A),
+                  "Total BTC:", "%.3f" %((total_fund - float(balance_A["info"]["totalMarginBalance"])) / \
+                                         bid0_price_A),
+                  "Total Position:", "%.3f" %((hold_long_qty_B - hold_short_qty_B) * 100 / \
+                                              bid0_price_B + long_amount_A - short_amount_A),
                   "Profit:", "%.2f" %profit)
             need_check_balance = False
 
