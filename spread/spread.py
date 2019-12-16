@@ -86,10 +86,11 @@ while True:
                                       / Min_MarginRatio - \
                                       float(balance_A["info"]["totalInitialMargin"])) / \
                                       bid0_price_A
-            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  A.id.ljust(7), "position:", 10*float(balance_A["info"]["totalInitialMargin"])/bid0_price_A)
             # TODO position need binance api to update
             short_amount_A = 10*float(balance_A["info"]["totalInitialMargin"])/bid0_price_A
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), A.id.ljust(7),
+                  "position long:", "%.3f" %long_amount_A,
+                  "position short:", "%.3f" %short_amount_A)
             sell_availAmount_A = trade_availableAmount_A * 10 + 2 * long_amount_A
             buy_availAmount_A = trade_availableAmount_A * 10 + 2 * short_amount_A
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
@@ -116,8 +117,8 @@ while True:
             bid0_price_B = order_book_B['bids'][0][0]
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   B.id.ljust(7),
-                  "position long:", hold_long_qty_B * 100 / bid0_price_B,
-                  "position short:", hold_short_qty_B * 100 / bid0_price_B)
+                  "position long:", "%.3f" %(hold_long_qty_B * 100 / bid0_price_B),
+                  "position short:", "%.3f" %(hold_short_qty_B * 100 / bid0_price_B))
             sell_availAmount_B = trade_availableAmount_B * 10 + \
                                  2 * hold_long_avail_qty_B * 100 / bid0_price_B
             buy_availAmount_B = trade_availableAmount_B * 10 + \
