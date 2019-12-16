@@ -120,6 +120,7 @@ while True:
         ask0_price_A = order_book_A['asks'][0][0]
         ask0_amount_A = order_book_A['asks'][0][1]
         bidask_spread_A = ask0_price_A - bid0_price_A
+        timestamp_A = time.time()
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), A.id.ljust(7),
                 "bids:",
                 "%5.2f" %bid0_price_A, "%5.2f" %bid0_amount_A,
@@ -134,6 +135,7 @@ while True:
         ask0_price_B = order_book_B['asks'][0][0]
         ask0_amount_B = order_book_B['asks'][0][1] * 100 / ask0_price_B
         bidask_spread_B = ask0_price_B - bid0_price_B
+        timestamp_B = time.time()
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), B.id.ljust(7),
                 "bids:",
                 "%5.2f" %bid0_price_B, "%5.2f" %bid0_amount_B,
@@ -141,12 +143,17 @@ while True:
                 "%5.2f" %ask0_price_B, "%5.2f" %ask0_amount_B,
                 "bss:",
                 "%5.2f" %bidask_spread_B)
+        if timestamp_B - timestamp_A > 0.1:
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                  "time delay to big", timestamp_B - timestamp_A)
+            continue
+
         AaskBbid_spread = (ask0_price_A - bid0_price_B)/bid0_price_B
         BaskAbid_spread = (ask0_price_B - bid0_price_A)/bid0_price_A
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-              B.id.ljust(7), "->", A.id.ljust(7), "%+.4f" %AaskBbid_spread)
+              B.id.ljust(7), "->", A.id.ljust(7), "profit: %+.4f" %AaskBbid_spread)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-              A.id.ljust(7), "->", B.id.ljust(7), "%+.4f" %BaskAbid_spread)
+              A.id.ljust(7), "->", B.id.ljust(7), "profit: %+.4f" %BaskAbid_spread)
 
         if BaskAbid_spread < Close_threshold:
             hit += 1
