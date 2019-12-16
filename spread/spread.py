@@ -25,6 +25,7 @@ init_balance = 0
 miss_balance_btc = 0.9
 total_fund = 0
 profit = 0
+need_check_balance = True
 
 long_amount_A = 0
 short_amount_A = 1
@@ -61,14 +62,15 @@ count = 0
 
 while True:
     try:
-        print("=" * 50)
+        print("=" * 80)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+              "count:", count
               "spread_hit:", spread_hit, "close_hit:", close_hit,
               "trade_mode:", Trade_mode,
               "balance_usd:", "%.1f" %total_fund,
               "profit:", "%.1f" %profit)
         time.sleep(10)
-        if count % 5 == 0:
+        if count % 5 == 0 or need_check_balance:
             # time.sleep(5)
             # marginRatio A
             balance_A = A.fetchBalance()
@@ -128,6 +130,7 @@ while True:
                   "Total USDT:", "%.1f" %total_fund,
                   "Total BTC:", "%.3f" %(total_fund / bid0_price_A),
                   "Profit:", "%.2f" %profit)
+            need_check_balance = False
 
         count += 1
 
@@ -199,6 +202,7 @@ while True:
                       "Too small trade amount")
                 continue
 
+            need_check_balance = True
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   A.id.ljust(7), "sell", AaskBbid_amount, "(BTC)", bid0_price_A,
                   B.id.ljust(7), "buy", B_amount, "(100USD)", ask0_price_B)
@@ -238,6 +242,7 @@ while True:
                       "Too small trade amount")
                 continue
 
+            need_check_balance = True
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   A.id.ljust(7), "buy", BaskAbid_amount, "(BTC)", ask0_price_A,
                   B.id.ljust(7), "sell", B_amount, "(100USD)", bid0_price_B)
