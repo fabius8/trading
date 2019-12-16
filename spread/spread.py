@@ -28,7 +28,8 @@ open_long = 1
 open_short = 2
 close_long = 3
 close_short = 4
-hit = 0
+spread_hit = 0
+close_hit = 0
 
 A = ccxt.binance(config["binance"])
 B = ccxt.okex3(config["okex"])
@@ -57,9 +58,10 @@ while True:
     try:
         print("=" * 50)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-              "hit:", hit, "balance usd:", "%.1f" %total_fund,
+              "spread hit:", spread_hit, "close hit:", close_hit,
+              "balance usd:", "%.1f" %total_fund,
               "profit:", "%.1f" %profit)
-        time.sleep(30)
+        time.sleep(10)
         if count % 5 == 0:
             # time.sleep(5)
             # marginRatio A
@@ -179,7 +181,7 @@ while True:
                   "Some orders is not close!")
 
         if BaskAbid_spread < Close_threshold:
-            hit += 1
+            close_hit += 1
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), A.id.ljust(7),
                   "sell", B.id.ljust(7), "buy", "spread:", AaskBbid_spread)
             continue
@@ -205,11 +207,12 @@ while True:
                 Bbid = B.create_order(B_pair, open_long, "limit", "buy",
                                       B_amount - hold_short_avail_qty_B,
                                       ask0_price_B)
-            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), A.id.ljust(7),
-                  "sell", B.id.ljust(7), "buy")
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                  A.id.ljust(7), "sell", AaskBbid_amount, "(BTC)", bid0_price_A,
+                  B.id.ljust(7), "buy", B_amount, "(100USD)", ask0_price_B)
 
         if BaskAbid_spread > Spread_threshold:
-            hit += 1
+            spread_hit += 1
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), B.id.ljust(7),
                   "sell", A.id.ljust(7), "buy", "spread:", BaskAbid_spread)
             continue
@@ -235,6 +238,10 @@ while True:
                 Bask = B.create_order(B_pair, open_short, "limit", "sell",
                                       B_amount - hold_long_avail_qty_B,
                                       bid0_price_B)
+
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                  A.id.ljust(7), "buy", BaskAbid_amount, "(BTC)", ask0_price_A,
+                  B.id.ljust(7), "sell", B_amount, "(100USD)", bid0_price_B)
 
     except Exception as err:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), err)
