@@ -17,6 +17,7 @@ Min_trade_amount = config["Min_trade_amount"]
 biggest_amount = 0.2
 side = 0
 init_balance = 0
+miss_balance_btc = 0.9
 total_fund = 0
 profit = 0
 
@@ -56,7 +57,8 @@ while True:
     try:
         print("=" * 50)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-              "hit:", hit, "balance:", total_fund, "profit:", profit)
+              "hit:", hit, "balance usd:", "%.1f" %total_fund,
+              "profit:", "%.1f" %profit)
         time.sleep(30)
         if count % 5 == 0:
             # time.sleep(5)
@@ -109,12 +111,15 @@ while True:
                   "sell available BTC amount:", "%3.4f" %sell_availAmount_B,
                   "buy available BTC amount:", "%3.4f" %buy_availAmount_B)
             total_fund = float(balance_B["info"]["info"]['btc']['equity']) * bid0_price_A + \
-                         float(balance_A["info"]["totalInitialMargin"])
+                         float(balance_A["info"]["totalMarginBalance"]) + \
+                         miss_balance_btc * bid0_price_A
             if count == 0:
                 init_balance = total_fund
             profit = total_fund - init_balance
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  "Total USDT:", total_fund, "Profit:", profit)
+                  "Total USDT:", total_fund,
+                  "Total BTC:", total_fund / bid0_price_A,
+                  "Profit:", profit)
 
         count += 1
 
@@ -161,7 +166,7 @@ while True:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
               A.id.ljust(7), "->", B.id.ljust(7), "profit: %+.4f" %BaskAbid_spread)
 
-        if timestamp_B - timestamp_A > 0.1:
+        if timestamp_B - timestamp_A > 0.7:
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   "time delay:", "%.6f" %(timestamp_B - timestamp_A), "too big!")
             continue
@@ -176,7 +181,7 @@ while True:
         if BaskAbid_spread < Close_threshold:
             hit += 1
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), A.id.ljust(7),
-                  "sell", B.id.ljust(7), "buy", "spread:", AaskBbid_spread, "hit:", hit)
+                  "sell", B.id.ljust(7), "buy", "spread:", AaskBbid_spread)
             continue
             AaskBbid_amount = min(bid0_amount_A, ask0_amount_B, biggest_amount,
                                   sell_availAmount_A, buy_availAmount_B)
@@ -206,7 +211,7 @@ while True:
         if BaskAbid_spread > Spread_threshold:
             hit += 1
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), B.id.ljust(7),
-                  "sell", A.id.ljust(7), "buy", "spread:", BaskAbid_spread, "hit:", hit)
+                  "sell", A.id.ljust(7), "buy", "spread:", BaskAbid_spread)
             continue
             BaskAbid_amount = min(ask0_amount_A, bid0_amount_B, biggest_amount,
                                   sell_availAmount_B, buy_availAmount_A)
