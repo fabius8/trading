@@ -59,8 +59,9 @@ while True:
     try:
         print("=" * 50)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-              "spread hit:", spread_hit, "close hit:", close_hit,
-              "balance usd:", "%.1f" %total_fund,
+              "spread_hit:", spread_hit, "close_hit:", close_hit,
+              "trade_mode:", Trade_mode,
+              "balance_usd:", "%.1f" %total_fund,
               "profit:", "%.1f" %profit)
         time.sleep(10)
         if count % 5 == 0:
@@ -120,9 +121,9 @@ while True:
                 init_balance = total_fund
             profit = total_fund - init_balance
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  "Total USDT:", total_fund,
-                  "Total BTC:", total_fund / bid0_price_A,
-                  "Profit:", profit)
+                  "Total USDT:", "%.1f" %total_fund,
+                  "Total BTC:", "%.3f" %(total_fund / bid0_price_A),
+                  "Profit:", "%.2f" %profit)
 
         count += 1
 
