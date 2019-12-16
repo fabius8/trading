@@ -145,8 +145,11 @@ while True:
                 "%5.2f" %bidask_spread_B)
         if timestamp_B - timestamp_A > 0.1:
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  "time delay to big", timestamp_B - timestamp_A)
+                  "time delay: ", timestamp_B - timestamp_A, "too big!")
             continue
+        else:
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                  "time dalay:", timestamp_B - timestamp_A)
 
         AaskBbid_spread = (ask0_price_A - bid0_price_B)/bid0_price_B
         BaskAbid_spread = (ask0_price_B - bid0_price_A)/bid0_price_A
