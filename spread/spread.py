@@ -199,7 +199,7 @@ while True:
             AaskBbid_amount = float("%.3f" %(B_amount * 100 / bid0_price_B))
             if AaskBbid_amount < Min_trade_amount:
                 print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                      "Too small trade amount")
+                      "Too small trade amount", AaskBbid_amount)
                 continue
 
             need_check_balance = True
@@ -239,7 +239,7 @@ while True:
             BaskAbid_amount = float("%.3f" %(B_amount * 100 / ask0_price_B))
             if BaskAbid_amount < Min_trade_amount:
                 print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                      "Too small trade amount")
+                      "Too small trade amount", BaskAbid_amount)
                 continue
 
             need_check_balance = True
