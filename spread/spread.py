@@ -6,6 +6,10 @@ import ccxt
 import smtplib
 import os
 
+
+def beep():
+    print("\a\a\a\a\a")
+
 config = json.load(open('config.json'))
 Base = config["Base"]
 Quote = config["Quote"]
@@ -213,6 +217,7 @@ while True:
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   A.id.ljust(7), "sell", AaskBbid_amount, "(BTC)", bid0_price_A,
                   B.id.ljust(7), "buy", B_amount, "(100USD)", ask0_price_B)
+            beep()
 
         if BaskAbid_spread > Spread_threshold:
             spread_hit += 1
@@ -246,6 +251,7 @@ while True:
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   A.id.ljust(7), "buy", BaskAbid_amount, "(BTC)", ask0_price_A,
                   B.id.ljust(7), "sell", B_amount, "(100USD)", bid0_price_B)
+            beep()
 
     except Exception as err:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), err)
