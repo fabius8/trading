@@ -218,10 +218,11 @@ while True:
                                       ask0_price_B)
                 print(Bbid)
             else:
-                Bbid = B.create_order(B_pair, close_short, "buy",
-                                      hold_short_avail_qty_B,
-                                      ask0_price_B)
-                print(Bbid)
+                if hold_short_avail_qty_B != 0:
+                    Bbid = B.create_order(B_pair, close_short, "buy",
+                                          hold_short_avail_qty_B,
+                                          ask0_price_B)
+                    print(Bbid)
                 Bbid = B.create_order(B_pair, open_long, "buy",
                                       B_amount - hold_short_avail_qty_B,
                                       ask0_price_B)
@@ -257,10 +258,11 @@ while True:
                                       bid0_price_B)
                 print(Bask)
             else:
-                Bask = B.create_order(B_pair, close_long, "sell",
-                                      hold_long_avail_qty_B,
-                                      bid0_price_B)
-                print(Bask)
+                if hold_long_avail_qty_B != 0:
+                    Bask = B.create_order(B_pair, close_long, "sell",
+                                          hold_long_avail_qty_B,
+                                          bid0_price_B)
+                    print(Bask)
                 Bask = B.create_order(B_pair, open_short, "sell",
                                       B_amount - hold_long_avail_qty_B,
                                       bid0_price_B)
