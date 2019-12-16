@@ -154,6 +154,13 @@ while True:
                 "%5.2f" %ask0_price_B, "%5.2f" %ask0_amount_B,
                 "bss:",
                 "%5.2f" %bidask_spread_B)
+        AaskBbid_spread = (ask0_price_A - bid0_price_B)/bid0_price_B
+        BaskAbid_spread = (ask0_price_B - bid0_price_A)/bid0_price_A
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+              B.id.ljust(7), "->", A.id.ljust(7), "profit: %+.4f" %AaskBbid_spread)
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+              A.id.ljust(7), "->", B.id.ljust(7), "profit: %+.4f" %BaskAbid_spread)
+
         if timestamp_B - timestamp_A > 0.1:
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   "time delay:", "%.6f" %(timestamp_B - timestamp_A), "too big!")
@@ -161,13 +168,6 @@ while True:
         else:
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   "time dalay:", "%.6f" %(timestamp_B - timestamp_A))
-
-        AaskBbid_spread = (ask0_price_A - bid0_price_B)/bid0_price_B
-        BaskAbid_spread = (ask0_price_B - bid0_price_A)/bid0_price_A
-        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-              B.id.ljust(7), "->", A.id.ljust(7), "profit: %+.4f" %AaskBbid_spread)
-        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-              A.id.ljust(7), "->", B.id.ljust(7), "profit: %+.4f" %BaskAbid_spread)
 
         if len(AopenOrders) > 0 or len(BopenOrders) > 0:
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
