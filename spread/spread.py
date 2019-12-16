@@ -16,6 +16,9 @@ Min_MarginRatio = config["Min_MarginRatio"]
 Min_trade_amount = config["Min_trade_amount"]
 biggest_amount = 0.2
 side = 0
+init_balance = 0
+total_fund = 0
+profit = 0
 
 long_amount_A = 0
 short_amount_A = 1
@@ -51,10 +54,12 @@ count = 0
 
 while True:
     try:
+        print("=" * 50)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-              "hit:", hit)
+              "hit:", hit, "balance:", total_fund, "profit:", profit)
+        time.sleep(30)
         if count % 5 == 0:
-            time.sleep(5)
+            # time.sleep(5)
             # marginRatio A
             balance_A = A.fetchBalance()
             marginRatio_A = float(balance_A["info"]["totalMarginBalance"]) / \
@@ -103,17 +108,23 @@ while True:
                   B.id.ljust(7),
                   "sell available BTC amount:", "%3.4f" %sell_availAmount_B,
                   "buy available BTC amount:", "%3.4f" %buy_availAmount_B)
-
-            time.sleep(1)
-            AopenOrders = A.fetchOpenOrders(symbol=A_pair)
+            total_fund = float(balance_B["info"]["info"]['btc']['equity']) * bid0_price_A + \
+                         float(balance_A["info"]["totalInitialMargin"])
+            if count == 0:
+                init_balance = total_fund
+            profit = total_fund - init_balance
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  A.id.ljust(7), "order:", AopenOrders)
-            BopenOrders = B.fetchOpenOrders(symbol=B_pair)
-            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  B.id.ljust(7), "order:", BopenOrders)
+                  "Total USDT:", total_fund, "Profit:", profit)
 
         count += 1
-        time.sleep(30)
+
+        AopenOrders = A.fetchOpenOrders(symbol=A_pair)
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+              A.id.ljust(7), "order:", AopenOrders)
+        BopenOrders = B.fetchOpenOrders(symbol=B_pair)
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+              B.id.ljust(7), "order:", BopenOrders)
+
         order_book_A = A.fetch_order_book(A_pair)
         bid0_price_A = order_book_A['bids'][0][0]
         bid0_amount_A = order_book_A['bids'][0][1]
@@ -145,11 +156,11 @@ while True:
                 "%5.2f" %bidask_spread_B)
         if timestamp_B - timestamp_A > 0.1:
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  "time delay: ", timestamp_B - timestamp_A, "too big!")
+                  "time delay:", "%.6f" %(timestamp_B - timestamp_A), "too big!")
             continue
         else:
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  "time dalay:", timestamp_B - timestamp_A)
+                  "time dalay:", "%.6f" %(timestamp_B - timestamp_A))
 
         AaskBbid_spread = (ask0_price_A - bid0_price_B)/bid0_price_B
         BaskAbid_spread = (ask0_price_B - bid0_price_A)/bid0_price_A
@@ -157,6 +168,10 @@ while True:
               B.id.ljust(7), "->", A.id.ljust(7), "profit: %+.4f" %AaskBbid_spread)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
               A.id.ljust(7), "->", B.id.ljust(7), "profit: %+.4f" %BaskAbid_spread)
+
+        if len(AopenOrders) > 0 or len(BopenOrders) > 0:
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                  "Some orders is not close!")
 
         if BaskAbid_spread < Close_threshold:
             hit += 1
