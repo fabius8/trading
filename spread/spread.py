@@ -14,6 +14,7 @@ Spread_threshold = config["Spread_threshold"]
 Close_threshold = config["Close_threshold"]
 Min_MarginRatio = config["Min_MarginRatio"]
 Min_trade_amount = config["Min_trade_amount"]
+Trade_mode = config["trade_mode"]
 biggest_amount = 0.2
 side = 0
 init_balance = 0
@@ -184,7 +185,8 @@ while True:
             close_hit += 1
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), A.id.ljust(7),
                   "sell", B.id.ljust(7), "buy", "spread:", AaskBbid_spread)
-            continue
+            if Trade_mode != True:
+                continue
             AaskBbid_amount = min(bid0_amount_A, ask0_amount_B, biggest_amount,
                                   sell_availAmount_A, buy_availAmount_B)
             B_amount = int(AaskBbid_amount * bid0_price_B / 100)
@@ -215,7 +217,8 @@ while True:
             spread_hit += 1
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), B.id.ljust(7),
                   "sell", A.id.ljust(7), "buy", "spread:", BaskAbid_spread)
-            continue
+            if Trade_mode != True:
+                continue
             BaskAbid_amount = min(ask0_amount_A, bid0_amount_B, biggest_amount,
                                   sell_availAmount_B, buy_availAmount_A)
             B_amount = int(BaskAbid_amount * ask0_price_B / 100)

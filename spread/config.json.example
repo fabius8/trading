@@ -27,5 +27,6 @@
     "Min_trade_amount": 0.01,
     "Base": "BTC",
     "Quote": "USD",
-    "Contract": "quarter"
+    "Contract": "quarter",
+    "trade_mode": true
 }
