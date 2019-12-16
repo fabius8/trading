@@ -64,7 +64,7 @@ while True:
     try:
         print("=" * 80)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-              "count:", count
+              "count:", count,
               "spread_hit:", spread_hit, "close_hit:", close_hit,
               "trade_mode:", Trade_mode,
               "balance_usd:", "%.1f" %total_fund,
