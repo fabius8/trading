@@ -198,6 +198,7 @@ while True:
         if len(AopenOrders) > 0 or len(BopenOrders) > 0:
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   "Some orders is not close!")
+            continue
 
         if BaskAbid_spread < Close_threshold:
             close_hit += 1
