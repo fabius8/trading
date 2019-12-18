@@ -19,7 +19,7 @@ Close_threshold = config["Close_threshold"]
 Min_MarginRatio = config["Min_MarginRatio"]
 Min_trade_amount = config["Min_trade_amount"]
 Trade_mode = config["trade_mode"]
-biggest_amount = 0.2
+biggest_amount = 0.02
 side = 0
 init_balance = 0
 miss_balance_btc = 0.9
@@ -222,7 +222,7 @@ while True:
             print(Aask)
 
             position_B = B.futures_get_instrument_id_position({"instrument_id": B_pair})
-            hold_short_avail_qty_B = float(position_B["holding"][0]["short_avail_qty"])
+            hold_short_avail_qty_B = int(position_B["holding"][0]["short_avail_qty"])
             if hold_short_avail_qty_B > B_amount:
                 Bbid = B.create_order(B_pair, close_short, "buy",
                                       B_amount,
@@ -262,7 +262,7 @@ while True:
             print(Abid)
 
             position_B = B.futures_get_instrument_id_position({"instrument_id": B_pair})
-            hold_long_avail_qty_B = float(position_B["holding"][0]["long_avail_qty"])
+            hold_long_avail_qty_B = int(position_B["holding"][0]["long_avail_qty"])
             if hold_long_avail_qty_B > B_amount:
                 Bask = B.create_order(B_pair, close_long, "sell",
                                       B_amount,
@@ -282,3 +282,4 @@ while True:
 
     except Exception as err:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), err)
+        continue
