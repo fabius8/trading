@@ -46,6 +46,9 @@ A_pair = ""
 B_pair = Base + '-' + Quote
 
 lock = 0
+lock_price_B = 0
+lock_amount_B = 0
+lock_side = ""
 
 
 for symbol in A.markets:
@@ -143,10 +146,6 @@ while True:
             profit = total_fund - init_balance
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   "Total USDT:", "%.1f" %total_fund,
-                  "Total BTC:", "%.3f" %((total_fund - float(balance_A["info"]["totalMarginBalance"])) / \
-                                         bid0_price_A),
-                  "Total Position:", "%.3f" %((hold_long_qty_B - hold_short_qty_B) * 100 / \
-                                              bid0_price_B + long_amount_A - short_amount_A),
                   "Profit:", "%.2f" %profit)
             need_check_balance = False
 
@@ -160,9 +159,10 @@ while True:
               "position long:", "%.3f" %(hold_long_qty_B * 100 / bid0_price_B),
               "position short:", "%.3f" %(hold_short_qty_B * 100 / bid0_price_B))
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+              "Total BTC:", "%.3f" %((total_fund - float(balance_A["info"]["totalMarginBalance"])) / \
+                                     bid0_price_A),
               "Total Position:", "%.3f" %((hold_long_qty_B - hold_short_qty_B) * 100 / \
-                                          bid0_price_B + long_amount_A - short_amount_A),
-              "Profit:", "%.2f" %profit)
+                                          bid0_price_B + long_amount_A - short_amount_A))
 
         AopenOrders = A.fetchOpenOrders(symbol=A_pair)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
@@ -217,7 +217,8 @@ while True:
 
         if len(AopenOrders) > 0 or len(BopenOrders) > 0 or lock == 1:
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  "Some orders is not close or order locking!")
+                  "Some orders is not close or order locking!",
+                  "price:", lock_price_B, "amount:", lock_amount_B, "side:", lock_side)
             continue
 
         if BaskAbid_spread < Close_threshold:
@@ -260,6 +261,9 @@ while True:
                                       ask0_price_B)
                 print(Bbid)
             lock = 0
+            lock_price_B = ask0_price_B
+            lock_amount_B = B_amount
+            lock_side = "buy"
             beep()
 
         if BaskAbid_spread > Spread_threshold:
@@ -302,6 +306,9 @@ while True:
                                       bid0_price_B)
                 print(Bask)
             lock = 0
+            lock_price_B = bid0_price_B
+            lock_amount_B = B_amount
+            lock_side = "sell"
             beep()
 
     except Exception as err:
