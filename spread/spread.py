@@ -28,7 +28,7 @@ profit = 0
 need_check_balance = True
 
 long_amount_A = 0
-short_amount_A = 1
+short_amount_A = 0
 
 open_long = 1
 open_short = 2
@@ -44,6 +44,8 @@ B.load_markets()
 
 A_pair = ""
 B_pair = Base + '-' + Quote
+
+lock = 0
 
 
 for symbol in A.markets:
@@ -87,7 +89,18 @@ while True:
                                       float(balance_A["info"]["totalInitialMargin"])) / \
                                       bid0_price_A
             # TODO position need binance api to update
-            short_amount_A = 10*float(balance_A["info"]["totalInitialMargin"])/bid0_price_A
+            positionRisk = A.fapiPrivateGetPositionRisk()
+            markPrice_A = float(positionRisk[0]["markPrice"])
+            entryPrice_A = float(positionRisk[0]["entryPrice"])
+            unRealizedProfit_A = float(positionRisk[0]["unRealizedProfit"])
+            if (markPrice_A > entryPrice_A and unRealizedProfit_A > 0) or \
+               (markPrice_A < entryPrice_A and unRealizedProfit_A < 0):
+                long_amount_A = float(positionRisk[0]["positionAmt"])
+                short_amount_A = 0.0
+            else:
+                short_amount_A = float(positionRisk[0]["positionAmt"])
+                long_amount_A = 0.0
+
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), A.id.ljust(7),
                   "position long:", "%.3f" %long_amount_A,
                   "position short:", "%.3f" %short_amount_A)
@@ -195,9 +208,9 @@ while True:
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   "time dalay:", "%.6f" %(timestamp_B - timestamp_A))
 
-        if len(AopenOrders) > 0 or len(BopenOrders) > 0:
+        if len(AopenOrders) > 0 or len(BopenOrders) > 0 or lock == 1:
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  "Some orders is not close!")
+                  "Some orders is not close or order locking!")
             continue
 
         if BaskAbid_spread < Close_threshold:
@@ -219,6 +232,7 @@ while True:
                   B.id.ljust(7), "buy", B_amount, "(100USD)", ask0_price_B)
 
             Aask = A.createLimitSellOrder(A_pair, AaskBbid_amount, bid0_price_A)
+            lock = 1
             print(Aask)
 
             position_B = B.futures_get_instrument_id_position({"instrument_id": B_pair})
@@ -238,6 +252,7 @@ while True:
                                       B_amount - hold_short_avail_qty_B,
                                       ask0_price_B)
                 print(Bbid)
+            lock = 0
             beep()
 
         if BaskAbid_spread > Spread_threshold:
@@ -260,6 +275,7 @@ while True:
                   B.id.ljust(7), "sell", B_amount, "(100USD)", bid0_price_B)
             Abid = A.createLimitBuyOrder(A_pair, BaskAbid_amount, ask0_price_A)
             print(Abid)
+            lock = 1
 
             position_B = B.futures_get_instrument_id_position({"instrument_id": B_pair})
             hold_long_avail_qty_B = int(position_B["holding"][0]["long_avail_qty"])
@@ -278,6 +294,7 @@ while True:
                                       B_amount - hold_long_avail_qty_B,
                                       bid0_price_B)
                 print(Bask)
+            lock = 0
             beep()
 
     except Exception as err:
