@@ -159,6 +159,10 @@ while True:
               B.id.ljust(7),
               "position long:", "%.3f" %(hold_long_qty_B * 100 / bid0_price_B),
               "position short:", "%.3f" %(hold_short_qty_B * 100 / bid0_price_B))
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+              "Total Position:", "%.3f" %((hold_long_qty_B - hold_short_qty_B) * 100 / \
+                                          bid0_price_B + long_amount_A - short_amount_A),
+              "Profit:", "%.2f" %profit)
 
         AopenOrders = A.fetchOpenOrders(symbol=A_pair)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
