@@ -81,6 +81,13 @@ while True:
                             float(balance_A["info"]["totalInitialMargin"]) != 0 else 1
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                   A.id.ljust(7), "marginRatio(big safe):", "%3.4f" %marginRatio_A)
+
+            # marginRatio B
+            balance_B = B.fetchBalance()
+            marginRatio_B = float(balance_B["info"]["info"]['btc']['margin_ratio'])
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                  B.id.ljust(7), "marginRatio(big safe):", "%3.4f" %marginRatio_B)
+
             # trade avaliable Amount BTC
             order_book_A = A.fetch_order_book(A_pair)
             bid0_price_A = order_book_A['bids'][0][0]
@@ -101,22 +108,6 @@ while True:
                 short_amount_A = float(positionRisk[0]["positionAmt"])
                 long_amount_A = 0.0
 
-            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), A.id.ljust(7),
-                  "position long:", "%.3f" %long_amount_A,
-                  "position short:", "%.3f" %short_amount_A)
-            sell_availAmount_A = trade_availableAmount_A * 10 + 2 * long_amount_A
-            buy_availAmount_A = trade_availableAmount_A * 10 + 2 * short_amount_A
-            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  A.id.ljust(7),
-                  "sell available BTC amount:", "%3.4f" %sell_availAmount_A,
-                  "buy available BTC amount:", "%3.4f" %buy_availAmount_A)
-
-            # marginRatio B
-            balance_B = B.fetchBalance()
-            marginRatio_B = float(balance_B["info"]["info"]['btc']['margin_ratio'])
-            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  B.id.ljust(7), "marginRatio(big safe):", "%3.4f" %marginRatio_B)
-
             # trade available Amount BTC
             trade_availableAmount_B = (float(balance_B["info"]["info"]['btc']['equity']) / \
                                        Min_MarginRatio / 10 \
@@ -128,10 +119,14 @@ while True:
             hold_short_qty_B = float(position_B["holding"][0]["short_qty"])
             order_book_B = B.fetch_order_book(B_pair)
             bid0_price_B = order_book_B['bids'][0][0]
+
+            sell_availAmount_A = trade_availableAmount_A * 10 + 2 * long_amount_A
+            buy_availAmount_A = trade_availableAmount_A * 10 + 2 * short_amount_A
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  B.id.ljust(7),
-                  "position long:", "%.3f" %(hold_long_qty_B * 100 / bid0_price_B),
-                  "position short:", "%.3f" %(hold_short_qty_B * 100 / bid0_price_B))
+                  A.id.ljust(7),
+                  "sell available BTC amount:", "%3.4f" %sell_availAmount_A,
+                  "buy available BTC amount:", "%3.4f" %buy_availAmount_A)
+
             sell_availAmount_B = trade_availableAmount_B * 10 + \
                                  2 * hold_long_avail_qty_B * 100 / bid0_price_B
             buy_availAmount_B = trade_availableAmount_B * 10 + \
@@ -156,6 +151,14 @@ while True:
             need_check_balance = False
 
         count += 1
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), A.id.ljust(7),
+              "position long:", "%.3f" %long_amount_A,
+              "position short:", "%.3f" %short_amount_A)
+
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+              B.id.ljust(7),
+              "position long:", "%.3f" %(hold_long_qty_B * 100 / bid0_price_B),
+              "position short:", "%.3f" %(hold_short_qty_B * 100 / bid0_price_B))
 
         AopenOrders = A.fetchOpenOrders(symbol=A_pair)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
