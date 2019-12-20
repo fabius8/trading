@@ -241,8 +241,11 @@ while True:
                   B.id.ljust(7), "buy", B_amount, "(100USD)", ask0_price_B)
 
             Aask = A.createLimitSellOrder(A_pair, AaskBbid_amount, bid0_price_A)
-            lock = 1
             print(Aask)
+            lock = 1
+            lock_price_B = ask0_price_B
+            lock_amount_B = B_amount
+            lock_side = "buy"
 
             position_B = B.futures_get_instrument_id_position({"instrument_id": B_pair})
             hold_short_avail_qty_B = int(position_B["holding"][0]["short_avail_qty"])
@@ -262,10 +265,8 @@ while True:
                                       ask0_price_B)
                 print(Bbid)
             lock = 0
-            lock_price_B = ask0_price_B
-            lock_amount_B = B_amount
-            lock_side = "buy"
             beep()
+            os.system("say Transaction order has been placed")
 
         if BaskAbid_spread > Spread_threshold:
             spread_hit += 1
@@ -288,6 +289,9 @@ while True:
             Abid = A.createLimitBuyOrder(A_pair, BaskAbid_amount, ask0_price_A)
             print(Abid)
             lock = 1
+            lock_price_B = bid0_price_B
+            lock_amount_B = B_amount
+            lock_side = "sell"
 
             position_B = B.futures_get_instrument_id_position({"instrument_id": B_pair})
             hold_long_avail_qty_B = int(position_B["holding"][0]["long_avail_qty"])
@@ -307,10 +311,8 @@ while True:
                                       bid0_price_B)
                 print(Bask)
             lock = 0
-            lock_price_B = bid0_price_B
-            lock_amount_B = B_amount
-            lock_side = "sell"
             beep()
+            os.system("say Transaction order has been placed")
 
     except Exception as err:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), err)
