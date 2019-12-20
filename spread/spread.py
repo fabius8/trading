@@ -18,8 +18,8 @@ Spread_threshold = config["Spread_threshold"]
 Close_threshold = config["Close_threshold"]
 Min_MarginRatio = config["Min_MarginRatio"]
 Min_trade_amount = config["Min_trade_amount"]
+Max_trade_amount = config["Max_trade_amount"]
 Trade_mode = config["trade_mode"]
-biggest_amount = 0.02
 side = 0
 init_balance = 0
 miss_balance_btc = 0.9
@@ -70,6 +70,7 @@ while True:
         print("=" * 80)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
               "count:", count,
+              "max_trade_amount:", Max_trade_amount,
               "spread_hit:", spread_hit, "close_hit:", close_hit,
               "trade_mode:", Trade_mode,
               "balance_usd:", "%.1f" %total_fund,
@@ -225,7 +226,7 @@ while True:
             close_hit += 1
             if Trade_mode != True:
                 continue
-            AaskBbid_amount = min(bid0_amount_A, ask0_amount_B, biggest_amount,
+            AaskBbid_amount = min(bid0_amount_A, ask0_amount_B, Max_trade_amount,
                                   sell_availAmount_A, buy_availAmount_B)
             B_amount = int(AaskBbid_amount * bid0_price_B / 100)
             AaskBbid_amount = float("%.3f" %(B_amount * 100 / bid0_price_B))
@@ -271,7 +272,7 @@ while True:
 
             if Trade_mode != True:
                 continue
-            BaskAbid_amount = min(ask0_amount_A, bid0_amount_B, biggest_amount,
+            BaskAbid_amount = min(ask0_amount_A, bid0_amount_B, Max_trade_amount,
                                   sell_availAmount_B, buy_availAmount_A)
             B_amount = int(BaskAbid_amount * ask0_price_B / 100)
             BaskAbid_amount = float("%.3f" %(B_amount * 100 / ask0_price_B))
