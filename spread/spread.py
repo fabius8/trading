@@ -10,6 +10,7 @@ import os
 def beep():
     print("\a\a\a\a\a")
 
+
 config = json.load(open('config.json'))
 Base = config["Base"]
 Quote = config["Quote"]
@@ -75,7 +76,7 @@ while True:
               "trade_mode:", Trade_mode,
               "balance_usd:", "%.1f" %total_fund,
               "profit:", "%.1f" %profit)
-        time.sleep(10)
+        time.sleep(8)
         if count % 5 == 0 or need_check_balance:
             # time.sleep(5)
             # marginRatio A
@@ -316,4 +317,5 @@ while True:
 
     except Exception as err:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), err)
+        time.sleep(5)
         continue
