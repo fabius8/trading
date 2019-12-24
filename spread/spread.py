@@ -37,6 +37,7 @@ close_long = 3
 close_short = 4
 spread_hit = 0
 close_hit = 0
+trade_hit = 0
 
 A = ccxt.binance(config["binance"])
 B = ccxt.okex3(config["okex"])
@@ -267,6 +268,7 @@ while True:
                 print(Bbid)
             lock = 0
             beep()
+            trade_hit += 1
             os.system("say Transaction order has been placed")
 
         if BaskAbid_spread > Spread_threshold:
@@ -313,6 +315,7 @@ while True:
                 print(Bask)
             lock = 0
             beep()
+            trade_hit += 1
             os.system("say Transaction order has been placed")
 
     except Exception as err:
