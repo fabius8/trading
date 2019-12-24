@@ -72,6 +72,7 @@ while True:
         print("=" * 80)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
               "count:", count,
+              "trade_hit:", trade_hit,
               "max_trade_amount:", Max_trade_amount,
               "spread_hit:", spread_hit, "close_hit:", close_hit,
               "trade_mode:", Trade_mode,
