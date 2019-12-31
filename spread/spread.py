@@ -321,5 +321,5 @@ while True:
 
     except Exception as err:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), err)
-        time.sleep(5)
+        time.sleep(30)
         continue
