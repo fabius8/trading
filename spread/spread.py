@@ -86,14 +86,10 @@ while True:
             marginRatio_A = float(balance_A["info"]["totalMarginBalance"]) / \
                             (10 * float(balance_A["info"]["totalInitialMargin"])) if \
                             float(balance_A["info"]["totalInitialMargin"]) != 0 else 1
-            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  A.id.ljust(7), "marginRatio(big safe):", "%3.4f" %marginRatio_A)
 
             # marginRatio B
             balance_B = B.fetchBalance()
             marginRatio_B = float(balance_B["info"]["info"]['btc']['margin_ratio'])
-            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  B.id.ljust(7), "marginRatio(big safe):", "%3.4f" %marginRatio_B)
 
             # trade avaliable Amount BTC
             order_book_A = A.fetch_order_book(A_pair)
@@ -129,19 +125,11 @@ while True:
 
             sell_availAmount_A = trade_availableAmount_A * 10 + 2 * long_amount_A
             buy_availAmount_A = trade_availableAmount_A * 10 + 2 * short_amount_A
-            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  A.id.ljust(7),
-                  "sell available BTC amount:", "%3.4f" %sell_availAmount_A,
-                  "buy available BTC amount:", "%3.4f" %buy_availAmount_A)
 
             sell_availAmount_B = trade_availableAmount_B * 10 + \
                                  2 * hold_long_avail_qty_B * 100 / bid0_price_B
             buy_availAmount_B = trade_availableAmount_B * 10 + \
                                 2 * hold_short_avail_qty_B * 100 / bid0_price_B
-            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                  B.id.ljust(7),
-                  "sell available BTC amount:", "%3.4f" %sell_availAmount_B,
-                  "buy available BTC amount:", "%3.4f" %buy_availAmount_B)
             total_fund = float(balance_B["info"]["info"]['btc']['equity']) * bid0_price_A + \
                          float(balance_A["info"]["totalMarginBalance"]) + \
                          miss_balance_btc * bid0_price_A
@@ -154,6 +142,18 @@ while True:
             need_check_balance = False
 
         count += 1
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+              A.id.ljust(7), "marginRatio(big safe):", "%3.4f" %marginRatio_A)
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+              B.id.ljust(7), "marginRatio(big safe):", "%3.4f" %marginRatio_B)
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+              A.id.ljust(7),
+              "sell available BTC amount:", "%3.4f" %sell_availAmount_A,
+              "buy available BTC amount:", "%3.4f" %buy_availAmount_A)
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+              B.id.ljust(7),
+              "sell available BTC amount:", "%3.4f" %sell_availAmount_B,
+              "buy available BTC amount:", "%3.4f" %buy_availAmount_B)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), A.id.ljust(7),
               "position long:", "%.3f" %long_amount_A,
               "position short:", "%.3f" %short_amount_A)
