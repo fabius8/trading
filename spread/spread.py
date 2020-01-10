@@ -20,6 +20,8 @@ Close_threshold = config["Close_threshold"]
 Min_MarginRatio = config["Min_MarginRatio"]
 Min_trade_amount = config["Min_trade_amount"]
 Max_trade_amount = config["Max_trade_amount"]
+Limit_close_trade_amount = config["Limit_close_trade_amount"]
+close_trade_amount = 0
 Trade_mode = config["trade_mode"]
 side = 0
 init_balance = 0
@@ -77,6 +79,7 @@ while True:
               "spread_hit:", spread_hit, "close_hit:", close_hit,
               "trade_mode:", Trade_mode,
               "balance_usd:", "%.1f" %total_fund,
+              "limit_close_trade_amount:", "%.1f" %Limit_close_trade_amount,
               "profit:", "%.1f" %profit)
         time.sleep(8)
         if count % 5 == 0 or need_check_balance:
@@ -227,7 +230,8 @@ while True:
 
         if BaskAbid_spread < Close_threshold:
             close_hit += 1
-            if Trade_mode != True:
+            if Trade_mode is not True or \
+               close_trade_amount > Limit_close_trade_amount:
                 continue
             AaskBbid_amount = min(bid0_amount_A, ask0_amount_B, Max_trade_amount,
                                   sell_availAmount_A, buy_availAmount_B)
@@ -249,6 +253,7 @@ while True:
             lock_price_B = ask0_price_B
             lock_amount_B = B_amount
             lock_side = "buy"
+            close_trade_amount += AaskBbid_amount
 
             position_B = B.futures_get_instrument_id_position({"instrument_id": B_pair})
             hold_short_avail_qty_B = int(position_B["holding"][0]["short_avail_qty"])
