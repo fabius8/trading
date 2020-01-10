@@ -78,7 +78,7 @@ while True:
               "spread_hit:", spread_hit, "close_hit:", close_hit,
               "trade_mode:", Trade_mode,
               "max_trade_amount:", Max_trade_amount,
-              "limit_close_trade_amount:", "%.1f" %Limit_close_trade_amount,
+              "limit_close_trade_amount:", "%.3f" %Limit_close_trade_amount,
               "balance_usd:", "%.1f" %total_fund,
               "profit:", "%.1f" %profit)
         time.sleep(8)
