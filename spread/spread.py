@@ -75,11 +75,11 @@ while True:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
               "count:", count,
               "trade_hit:", trade_hit,
-              "max_trade_amount:", Max_trade_amount,
               "spread_hit:", spread_hit, "close_hit:", close_hit,
               "trade_mode:", Trade_mode,
-              "balance_usd:", "%.1f" %total_fund,
+              "max_trade_amount:", Max_trade_amount,
               "limit_close_trade_amount:", "%.1f" %Limit_close_trade_amount,
+              "balance_usd:", "%.1f" %total_fund,
               "profit:", "%.1f" %profit)
         time.sleep(8)
         if count % 5 == 0 or need_check_balance:
