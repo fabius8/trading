@@ -254,6 +254,7 @@ while True:
             lock_amount_B = B_amount
             lock_side = "buy"
             close_trade_amount += AaskBbid_amount
+            print("." * 10)
 
             position_B = B.futures_get_instrument_id_position({"instrument_id": B_pair})
             hold_short_avail_qty_B = int(position_B["holding"][0]["short_avail_qty"])
@@ -301,6 +302,8 @@ while True:
             lock_price_B = bid0_price_B
             lock_amount_B = B_amount
             lock_side = "sell"
+            print("." * 10)
+            close_trade_amount -= BaskAbid_amount
 
             position_B = B.futures_get_instrument_id_position({"instrument_id": B_pair})
             hold_long_avail_qty_B = int(position_B["holding"][0]["long_avail_qty"])
