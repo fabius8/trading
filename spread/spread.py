@@ -25,7 +25,7 @@ close_trade_amount = 0
 Trade_mode = config["trade_mode"]
 side = 0
 init_balance = 0
-miss_balance_btc = 0.9
+miss_balance_btc = 0.4
 total_fund = 0
 profit = 0
 need_check_balance = True
@@ -111,7 +111,7 @@ while True:
                 long_amount_A = float(positionRisk[0]["positionAmt"])
                 short_amount_A = 0.0
             else:
-                short_amount_A = float(positionRisk[0]["positionAmt"])
+                short_amount_A = -float(positionRisk[0]["positionAmt"])
                 long_amount_A = 0.0
 
             # trade available Amount BTC
