@@ -1,6 +1,7 @@
 """
 Test cryptocurrency on binance 4h on Donchian Channel
 By fabius8
+haha
 """
 from catalyst import run_algorithm
 import numpy as np
