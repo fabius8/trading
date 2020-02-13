@@ -54,6 +54,7 @@ while True:
                     break
             print(log)
         old_fundingRate = fundingRate
+        time.sleep(1)
     except Exception as err:
         old_fundingRate = fundingRate
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), err)
