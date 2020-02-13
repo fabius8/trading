@@ -37,6 +37,7 @@ while True:
                   " fundingRate:" + \
                   " %.6f" % (float(i['lastFundingRate']) * 100)
             if old_fundingRate is None:
+                log += " " + "-"*9
                 log += spread
                 print(log)
                 continue
@@ -45,6 +46,7 @@ while True:
                     delta_fundingRate = float(i['lastFundingRate']) - \
                                         float(j['lastFundingRate'])
                     if delta_fundingRate == 0:
+                        log += " "*10
                         log += spread
                         break
                     log += ' %+.6f' % (delta_fundingRate * 100)
