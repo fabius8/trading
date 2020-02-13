@@ -53,8 +53,8 @@ while True:
                     log += spread
                     break
             print(log)
+            time.sleep(1)
         old_fundingRate = fundingRate
-        time.sleep(1)
     except Exception as err:
         old_fundingRate = fundingRate
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), err)
