@@ -16,13 +16,17 @@ binance_spot.load_markets()
 old_fundingRate = None
 
 
-def get_spread(symbol, future, spot):
+def get_spread_close(symbol, future, spot):
     symbol = symbol.replace('USDT', '/USDT')
     order_book_A = future.fetch_order_book(symbol)
     bid0_A = order_book_A['bids'][0][0]
+    ask0_A = order_book_A['asks'][0][0]
     order_book_B = spot.fetch_order_book(symbol)
+    bid0_B = order_book_B['bids'][0][0]
     ask0_B = order_book_B['asks'][0][0]
-    return " %+.4f" % ((bid0_A - ask0_B)/ask0_B*100) + "%"
+    log = " %+.4f" % ((bid0_A - ask0_B)/ask0_B*100) + "%" + \
+          " %+.4f" % ((bid0_B - ask0_A)/ask0_A*100) + "%"
+    return log
 
 
 while True:
@@ -31,7 +35,7 @@ while True:
         log = ""
         fundingRate = binance_future.fapiPublicGetPremiumIndex()
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-        print(" "*8, "fundRate", "minuteRate", "spread")
+        print(" "*8, "fundRate", "minuteRate", "spread  close")
         for i in fundingRate:
             spread = get_spread(i['symbol'], binance_future, binance_spot)
             log = i['symbol'].ljust(8) + \
