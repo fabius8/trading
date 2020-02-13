@@ -31,11 +31,11 @@ while True:
         log = ""
         fundingRate = binance_future.fapiPublicGetPremiumIndex()
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+        print(" "*8, "fundRate", "minuteRate", "spread")
         for i in fundingRate:
             spread = get_spread(i['symbol'], binance_future, binance_spot)
             log = i['symbol'].ljust(8) + \
-                  " fundingRate:" + \
-                  " %.6f" % (float(i['lastFundingRate']) * 100)
+                  " %+.6f" % (float(i['lastFundingRate']) * 100)
             if old_fundingRate is None:
                 log += " " + "-"*9
                 log += spread
@@ -46,15 +46,16 @@ while True:
                     delta_fundingRate = float(i['lastFundingRate']) - \
                                         float(j['lastFundingRate'])
                     if delta_fundingRate == 0:
-                        log += " "*10
+                        log += " "*9
                         log += spread
                         break
-                    log += ' %+.4f' % (delta_fundingRate * 100)
+                    log += ' %+.5f' % (delta_fundingRate * 100)
                     log += spread
                     break
             print(log)
         old_fundingRate = fundingRate
     except Exception as err:
+        old_fundingRate = fundingRate
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), err)
         time.sleep(60)
         continue
