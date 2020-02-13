@@ -49,7 +49,7 @@ while True:
                         log += " "*10
                         log += spread
                         break
-                    log += ' %+.6f' % (delta_fundingRate * 100)
+                    log += ' %+.4f' % (delta_fundingRate * 100)
                     log += spread
                     break
             print(log)
