@@ -62,6 +62,8 @@ while True:
     except Exception as err:
         old_fundingRate = fundingRate
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), err)
+        binance_future.load_markets()
+        binance_spot.load_markets()
         time.sleep(60)
         continue
     time.sleep(60)
