@@ -45,17 +45,21 @@ while True:
     try:
         prices = []
         r = requests.get(url=url, headers=HEADER, params={'t': '1581768737354',
-                                                      'side': 'sell',
-                                                      'baseCurrency': 'usdt',
-                                                      'quoteCurrency': 'cny',
-                                                      'userType': 'certified',
-                                                      'paymentMethod': 'all'})
+                                                          'side': 'sell',
+                                                          'baseCurrency': 'usdt',
+                                                          'quoteCurrency': 'cny',
+                                                          'userType': 'certified',
+                                                          'paymentMethod': 'all'},
+                         timeout=5)
         for i in r.json()['data']['sell']:
             prices.append(i['price'])
 
         count = Counter(prices)
+        #count.most_common()
+        count = sorted(count.items())
         print(count)
     except Exception as err:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), err)
-        pass
-    time.sleep(60)
+        time.sleep(60)
+        continue
+    time.sleep(60*15)
