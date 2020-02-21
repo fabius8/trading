@@ -25,7 +25,7 @@ for symbol in okex_future.markets:
 
 swap = swapusd + swapusdt
 
-old_fundingRate = None
+old_fundingRate = {}
 fundingRate = None
 
 
@@ -57,13 +57,21 @@ while True:
             spread = get_spread_close(i, okex_future, okex_spot)
             log = i.ljust(14) + \
                   " %+.6f" % ((float(fundingRate['estimated_rate'])) * 100)
-            if old_fundingRate is None:
+            #if not old_fundingRate:
+            #    log += " " + "-"*9
+            #    log += spread
+            #    print(log)
+            #    continue
+            if i in old_fundingRate:
+                delta_fundingRate = float(fundingRate['estimated_rate']) - \
+                                    float(old_fundingRate[i])
+                old_fundingRate[i] = float(fundingRate['estimated_rate'])
+            else:
+                old_fundingRate[i] = float(fundingRate['estimated_rate'])
                 log += " " + "-"*9
                 log += spread
                 print(log)
                 continue
-            delta_fundingRate = float(fundingRate['estimated_rate']) - \
-                                float(old_fundingRate['estimated_rate'])
             if delta_fundingRate == 0:
                 log += " "*9
                 log += spread
@@ -72,7 +80,7 @@ while True:
                 log += spread
             print(log)
             time.sleep(1)
-        old_fundingRate = fundingRate
+
     except Exception as err:
         old_fundingRate = fundingRate
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), err)
