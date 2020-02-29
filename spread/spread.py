@@ -25,7 +25,7 @@ close_trade_amount = 0
 Trade_mode = config["trade_mode"]
 side = 0
 init_balance = 0
-miss_balance_btc = 1.6
+miss_balance_btc = 2
 total_fund = 0
 profit = 0
 need_check_balance = True
@@ -81,7 +81,7 @@ while True:
               "limit_close_trade_amount:", "%.3f" %Limit_close_trade_amount,
               "balance_usd:", "%.1f" %total_fund,
               "profit:", "%.1f" %profit)
-        time.sleep(8)
+        time.sleep(2)
         if count % 5 == 0 or need_check_balance:
             # time.sleep(5)
             # marginRatio A
@@ -329,5 +329,5 @@ while True:
 
     except Exception as err:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), err)
-        time.sleep(30)
+        time.sleep(10)
         continue
