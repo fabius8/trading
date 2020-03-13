@@ -68,12 +68,12 @@ while True:
                 old_fundingRate[i] = float(fundingRate['estimated_rate'])
             else:
                 old_fundingRate[i] = float(fundingRate['estimated_rate'])
-                log += " " + "-"*9
+                log += " " + "-"*7
                 log += spread
                 print(log)
                 continue
             if delta_fundingRate == 0:
-                log += " "*9
+                log += " "*7
                 log += spread
             else:
                 log += ' %+.3f' % (delta_fundingRate * 100)

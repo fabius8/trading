@@ -41,7 +41,7 @@ while True:
             log = i['symbol'].ljust(8) + \
                   " %+.3f" % (float(i['lastFundingRate']) * 100)
             if old_fundingRate is None:
-                log += " " + "-"*9
+                log += " " + "-"*7
                 log += spread
                 print(log)
                 continue
@@ -50,7 +50,7 @@ while True:
                     delta_fundingRate = float(i['lastFundingRate']) - \
                                         float(j['lastFundingRate'])
                     if delta_fundingRate == 0:
-                        log += " "*9
+                        log += " "*7
                         log += spread
                         break
                     log += ' %+.3f' % (delta_fundingRate * 100)
