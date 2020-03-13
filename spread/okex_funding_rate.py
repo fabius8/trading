@@ -41,8 +41,8 @@ def get_spread_close(symbol, future, spot):
     bid0_B = order_book_B['bids'][0][0]
     ask0_B = order_book_B['asks'][0][0]
     #print(bid0_A, ask0_A, bid0_B, ask0_B)
-    log = " %+.4f" % ((bid0_A - ask0_B)/ask0_B*100) + "%" + \
-          " %+.4f" % ((bid0_B - ask0_A)/ask0_A*100) + "%"
+    log = " %+.2f" % ((bid0_A - ask0_B)/ask0_B*100) + "%" + \
+          " %+.2f" % ((bid0_B - ask0_A)/ask0_A*100) + "%"
     return log
 
 
@@ -56,7 +56,7 @@ while True:
             fundingRate = okex_future.swapGetInstrumentsInstrumentIdFundingTime({'instrument_id': i})
             spread = get_spread_close(i, okex_future, okex_spot)
             log = i.ljust(14) + \
-                  " %+.6f" % ((float(fundingRate['estimated_rate'])) * 100)
+                  " %+.4f" % ((float(fundingRate['estimated_rate'])) * 100)
             #if not old_fundingRate:
             #    log += " " + "-"*9
             #    log += spread
@@ -76,7 +76,7 @@ while True:
                 log += " "*9
                 log += spread
             else:
-                log += ' %+.5f' % (delta_fundingRate * 100)
+                log += ' %+.3f' % (delta_fundingRate * 100)
                 log += spread
             print(log)
             time.sleep(1)

@@ -2,6 +2,8 @@
 import json
 import time
 import ccxt
+import smtplib
+import os
 
 config = json.load(open('config.json'))
 

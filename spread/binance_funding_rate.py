@@ -24,8 +24,8 @@ def get_spread_close(symbol, future, spot):
     order_book_B = spot.fetch_order_book(symbol)
     bid0_B = order_book_B['bids'][0][0]
     ask0_B = order_book_B['asks'][0][0]
-    log = " %+.4f" % ((bid0_A - ask0_B)/ask0_B*100) + "%" + \
-          " %+.4f" % ((bid0_B - ask0_A)/ask0_A*100) + "%"
+    log = " %+.2f" % ((bid0_A - ask0_B)/ask0_B*100) + "%" + \
+          " %+.2f" % ((bid0_B - ask0_A)/ask0_A*100) + "%"
     return log
 
 
@@ -39,7 +39,7 @@ while True:
         for i in fundingRate:
             spread = get_spread_close(i['symbol'], binance_future, binance_spot)
             log = i['symbol'].ljust(8) + \
-                  " %+.6f" % (float(i['lastFundingRate']) * 100)
+                  " %+.3f" % (float(i['lastFundingRate']) * 100)
             if old_fundingRate is None:
                 log += " " + "-"*9
                 log += spread
@@ -53,7 +53,7 @@ while True:
                         log += " "*9
                         log += spread
                         break
-                    log += ' %+.5f' % (delta_fundingRate * 100)
+                    log += ' %+.3f' % (delta_fundingRate * 100)
                     log += spread
                     break
             print(log)
