@@ -43,7 +43,7 @@ while True:
             if old_fundingRate is None:
                 log += " " + "-"*4
                 log += spread
-                if log.find('BTC'):
+                if 'BTC' in log:
                     print('\033[95m', log, '\033[0m')
                 else:
                     print(log)
@@ -59,7 +59,7 @@ while True:
                     log += ' %+.3f' % (delta_fundingRate * 100)
                     log += spread
                     break
-            if log.find('BTC'):
+            if 'BTC' in log:
                 print('\033[95m', log, '\033[0m')
             else:
                 print(log)
