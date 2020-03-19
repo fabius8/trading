@@ -70,15 +70,21 @@ while True:
                 old_fundingRate[i] = float(fundingRate['estimated_rate'])
                 log += " " + "-"*7
                 log += spread
-                print(log)
+                if 'BTC' in log:
+                    print('\033[92m', log, '\033[0m')
+                else:
+                    print(log)
                 continue
             if delta_fundingRate == 0:
-                log += " "*7
+                log += " "*4
                 log += spread
             else:
                 log += ' %+.3f' % (delta_fundingRate * 100)
                 log += spread
-            print(log)
+            if 'BTC' in log:
+                print('\033[92m', log, '\033[0m')
+            else:
+                print(log)
             time.sleep(1)
 
     except Exception as err:

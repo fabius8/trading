@@ -31,7 +31,7 @@ def get_spread_close(symbol, future, spot):
 
 while True:
     try:
-        print("="*50)
+        print("="*30)
         log = ""
         fundingRate = binance_future.fapiPublicGetPremiumIndex()
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
@@ -41,9 +41,12 @@ while True:
             log = i['symbol'].ljust(8) + \
                   " %+.3f" % (float(i['lastFundingRate']) * 100)
             if old_fundingRate is None:
-                log += " " + "-"*7
+                log += " " + "-"*4
                 log += spread
-                print(log)
+                if log.find('BTC'):
+                    print('\033[95m', log, '\033[0m')
+                else:
+                    print(log)
                 continue
             for j in old_fundingRate:
                 if j['symbol'] == i['symbol']:
@@ -56,7 +59,10 @@ while True:
                     log += ' %+.3f' % (delta_fundingRate * 100)
                     log += spread
                     break
-            print(log)
+            if log.find('BTC'):
+                print('\033[95m', log, '\033[0m')
+            else:
+                print(log)
             time.sleep(1)
         old_fundingRate = fundingRate
     except Exception as err:
