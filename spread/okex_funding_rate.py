@@ -66,7 +66,7 @@ while True:
             fundingRate = okex_future.swapGetInstrumentsInstrumentIdFundingTime({'instrument_id': i})
             spread = get_spread_close(i, okex_future, okex_spot)
             log = i.ljust(14) + \
-                  " %+.4f" % ((float(fundingRate['estimated_rate'])) * 100)
+                  " %+.3f" % ((float(fundingRate['estimated_rate'])) * 100)
             #if not old_fundingRate:
             #    log += " " + "-"*9
             #    log += spread
