@@ -89,7 +89,7 @@ while True:
                                  'range': '0',
                                  'amount': ''},
                          timeout=5)
-        print("huobi  buy: ", r.json()['data'][0]['price'])
+        print("huobi    buy: ", r.json()['data'][0]['price'])
 
         headers = {"Content-Type": "application/json;charset=UTF-8"}
         r = requests.get(url=huobi_url, headers=headers,
@@ -104,7 +104,7 @@ while True:
                                  'range': '0',
                                  'amount': ''},
                          timeout=5)
-        print("huobi  sell: ", r.json()['data'][0]['price'])
+        print("huobi   sell: ", r.json()['data'][0]['price'])
     except Exception as err:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), err)
         time.sleep(60)
