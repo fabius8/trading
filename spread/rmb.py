@@ -42,15 +42,6 @@ while True:
     try:
         # OKEX
         prices = []
-        r = requests.get(url=ok_url, headers=HEADER,
-                         params={'t': '1581768737354',
-                                 'side': 'buy',
-                                 'baseCurrency': 'usdt',
-                                 'quoteCurrency': 'cny',
-                                 'userType': 'certified',
-                                 'paymentMethod': 'all'},
-                         timeout=5)
-        print("OKEX     buy: ", r.json()['data']['buy'][0]['price'])
 
         r = requests.get(url=ok_url, headers=HEADER,
                          params={'t': '1581768737354',
@@ -60,7 +51,18 @@ while True:
                                  'userType': 'certified',
                                  'paymentMethod': 'all'},
                          timeout=5)
-        print("OKEX    sell: ", r.json()['data']['sell'][0]['price'])
+        print("OKEX    buy: ", r.json()['data']['sell'][0]['price'])
+
+
+        r = requests.get(url=ok_url, headers=HEADER,
+                         params={'t': '1581768737354',
+                                 'side': 'buy',
+                                 'baseCurrency': 'usdt',
+                                 'quoteCurrency': 'cny',
+                                 'userType': 'certified',
+                                 'paymentMethod': 'all'},
+                         timeout=5)
+        print("OKEX     sell: ", r.json()['data']['buy'][0]['price'])
 
         # binance
         headers = {"Content-Type": "application/json"}
