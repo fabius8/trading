@@ -93,7 +93,7 @@ while True:
             if 'BTC' in log:
                 log = bcolors.OKGREEN + log + bcolors.ENDC
             print(log)
-            time.sleep(3)
+            time.sleep(5)
 
     except Exception as err:
         old_fundingRate = fundingRate
@@ -102,6 +102,6 @@ while True:
         okex_spot.load_markets()
         time.sleep(60)
         continue
-    time.sleep(60)
+    time.sleep(40)
 
 
