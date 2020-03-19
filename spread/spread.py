@@ -1,14 +1,22 @@
 #!/usr/bin/env python3
 import json
-import sys
 import time
 import ccxt
-import smtplib
-import os
 
 
 def beep():
     print("\a\a\a\a\a")
+
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
 
 config = json.load(open('config.json'))
@@ -210,9 +218,15 @@ while True:
         AaskBbid_spread = (ask0_price_A - bid0_price_B)/bid0_price_B
         BaskAbid_spread = (ask0_price_B - bid0_price_A)/bid0_price_A
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-              B.id.ljust(7), "->", A.id.ljust(7), "profit: %+.4f" %AaskBbid_spread)
+              B.id.ljust(7), "->", A.id.ljust(7),
+              bcolors.OKBLUE,
+              "profit: %+.4f" %AaskBbid_spread,
+              bcolors.ENDC)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-              A.id.ljust(7), "->", B.id.ljust(7), "profit: %+.4f" %BaskAbid_spread)
+              A.id.ljust(7), "->", B.id.ljust(7),
+              bcolors.OKBLUE,
+              "profit: %+.4f" %BaskAbid_spread,
+              bcolors.ENDC)
 
         if timestamp_B - timestamp_A > 0.7:
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
