@@ -93,7 +93,7 @@ while True:
             if 'BTC' in log:
                 log = bcolors.OKGREEN + log + bcolors.ENDC
             print(log)
-            time.sleep(1)
+            time.sleep(3)
 
     except Exception as err:
         old_fundingRate = fundingRate
