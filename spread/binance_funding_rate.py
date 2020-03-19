@@ -15,6 +15,16 @@ binance_spot.load_markets()
 
 old_fundingRate = None
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 
 def get_spread_close(symbol, future, spot):
     symbol = symbol.replace('USDT', '/USDT')
@@ -44,9 +54,8 @@ while True:
                 log += " " + "-"*4
                 log += spread
                 if 'BTC' in log:
-                    print('\033[95m', log, '\033[0m')
-                else:
-                    print(log)
+                    log = bcolors.OKGREEN + log + bcolors.ENDC
+                print(log)
                 continue
             for j in old_fundingRate:
                 if j['symbol'] == i['symbol']:
@@ -60,9 +69,8 @@ while True:
                     log += spread
                     break
             if 'BTC' in log:
-                print('\033[95m', log, '\033[0m')
-            else:
-                print(log)
+                log = bcolors.OKGREEN + log + bcolors.ENDC
+            print(log)
             time.sleep(1)
         old_fundingRate = fundingRate
     except Exception as err:
