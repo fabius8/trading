@@ -48,10 +48,10 @@ def get_spread_close(symbol, future, spot):
 
 while True:
     try:
-        print("="*50)
+        print("="*30)
         log = ""
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-        print(" "*14, "fundRate", "minuteRate", "spread  close")
+        print(" "*14, "fundRate", "minRate", "sell  buy")
         for i in swap:
             fundingRate = okex_future.swapGetInstrumentsInstrumentIdFundingTime({'instrument_id': i})
             spread = get_spread_close(i, okex_future, okex_spot)

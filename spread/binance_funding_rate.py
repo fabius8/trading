@@ -35,7 +35,7 @@ while True:
         log = ""
         fundingRate = binance_future.fapiPublicGetPremiumIndex()
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-        print(" "*8, "fundRate", "minuteRate", "spread  close")
+        print(" "*8, "fundRate", "minRate", "sell  buy")
         for i in fundingRate:
             spread = get_spread_close(i['symbol'], binance_future, binance_spot)
             log = i['symbol'].ljust(8) + \
