@@ -85,7 +85,7 @@ while True:
                 print(log)
                 continue
             if delta_fundingRate == 0:
-                log += " "*4
+                log += " "*7
                 log += spread
             else:
                 log += ' %+.3f' % (delta_fundingRate * 100)
