@@ -219,13 +219,15 @@ while True:
         BaskAbid_spread = (ask0_price_B - bid0_price_A)/bid0_price_A
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
               B.id.ljust(7), "->", A.id.ljust(7),
-              bcolors.OKBLUE,
-              "profit: %+.4f" %AaskBbid_spread,
+              "profit:",
+              bcolors.FAIL,
+              "%+.4f" %AaskBbid_spread,
               bcolors.ENDC)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
               A.id.ljust(7), "->", B.id.ljust(7),
-              bcolors.OKBLUE,
-              "profit: %+.4f" %BaskAbid_spread,
+              "profit:",
+              bcolors.FAIL,
+              "%+.4f" %BaskAbid_spread,
               bcolors.ENDC)
 
         if timestamp_B - timestamp_A > 0.7:
