@@ -97,7 +97,7 @@ while True:
         print("OKEX     buy: ", r.json()['data']['sell'][0]['price'])
 
 
-        time.sleep(3)
+        time.sleep(6)
         r = requests.get(url=ok_url, headers=HEADER,
                          params={'t': '1581768737354',
                                  'side': 'buy',
