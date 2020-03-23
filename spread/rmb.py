@@ -110,6 +110,6 @@ while True:
         print("huobi   sell: ", r.json()['data'][0]['price'])
     except Exception as err:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), err)
-        time.sleep(60)
+        time.sleep(10)
         continue
     time.sleep(60*5)
