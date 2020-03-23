@@ -40,30 +40,6 @@ while True:
     print("="*40)
     print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
     try:
-        # OKEX
-        prices = []
-
-        r = requests.get(url=ok_url, headers=HEADER,
-                         params={'t': '1581768737354',
-                                 'side': 'sell',
-                                 'baseCurrency': 'usdt',
-                                 'quoteCurrency': 'cny',
-                                 'userType': 'certified',
-                                 'paymentMethod': 'all'},
-                         timeout=5)
-        print("OKEX     buy: ", r.json()['data']['sell'][0]['price'])
-
-
-        time.sleep(3)
-        r = requests.get(url=ok_url, headers=HEADER,
-                         params={'t': '1581768737354',
-                                 'side': 'buy',
-                                 'baseCurrency': 'usdt',
-                                 'quoteCurrency': 'cny',
-                                 'userType': 'certified',
-                                 'paymentMethod': 'all'},
-                         timeout=5)
-        print("OKEX    sell: ", r.json()['data']['buy'][0]['price'])
 
         # binance
         headers = {"Content-Type": "application/json"}
@@ -108,6 +84,31 @@ while True:
                                  'amount': ''},
                          timeout=5)
         print("huobi   sell: ", r.json()['data'][0]['price'])
+
+        # OKEX
+        r = requests.get(url=ok_url, headers=HEADER,
+                         params={'t': '1581768737354',
+                                 'side': 'sell',
+                                 'baseCurrency': 'usdt',
+                                 'quoteCurrency': 'cny',
+                                 'userType': 'certified',
+                                 'paymentMethod': 'all'},
+                         timeout=5)
+        print("OKEX     buy: ", r.json()['data']['sell'][0]['price'])
+
+
+        time.sleep(3)
+        r = requests.get(url=ok_url, headers=HEADER,
+                         params={'t': '1581768737354',
+                                 'side': 'buy',
+                                 'baseCurrency': 'usdt',
+                                 'quoteCurrency': 'cny',
+                                 'userType': 'certified',
+                                 'paymentMethod': 'all'},
+                         timeout=5)
+        print("OKEX    sell: ", r.json()['data']['buy'][0]['price'])
+
+
     except Exception as err:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), err)
         time.sleep(10)
