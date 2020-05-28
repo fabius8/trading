@@ -27,15 +27,18 @@ class bcolors:
 
 
 def get_spread_close(symbol, future, spot):
-    symbol = symbol.replace('USDT', '/USDT')
-    order_book_A = future.fetch_order_book(symbol)
-    bid0_A = order_book_A['bids'][0][0]
-    ask0_A = order_book_A['asks'][0][0]
-    order_book_B = spot.fetch_order_book(symbol)
-    bid0_B = order_book_B['bids'][0][0]
-    ask0_B = order_book_B['asks'][0][0]
-    log = " %+.2f" % ((bid0_A - ask0_B)/ask0_B*100) + "%" + \
-          " %+.2f" % ((bid0_B - ask0_A)/ask0_A*100) + "%"
+    try:
+        symbol = symbol.replace('USDT', '/USDT')
+        order_book_A = future.fetch_order_book(symbol)
+        bid0_A = order_book_A['bids'][0][0]
+        ask0_A = order_book_A['asks'][0][0]
+        order_book_B = spot.fetch_order_book(symbol)
+        bid0_B = order_book_B['bids'][0][0]
+        ask0_B = order_book_B['asks'][0][0]
+        log = " %+.2f" % ((bid0_A - ask0_B)/ask0_B*100) + "%" + \
+              " %+.2f" % ((bid0_B - ask0_A)/ask0_A*100) + "%"
+    except Exception as err:
+        log = "HAHA ERROR!"
     return log
 
 
