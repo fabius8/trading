@@ -38,7 +38,7 @@ def get_spread_close(symbol, future, spot):
         log = " %+.2f" % ((bid0_A - ask0_B)/ask0_B*100) + "%" + \
               " %+.2f" % ((bid0_B - ask0_A)/ask0_A*100) + "%"
     except Exception as err:
-        log = "HAHA ERROR!"
+        log = " HAHA ERROR!"
     return log
 
 
