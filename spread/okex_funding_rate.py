@@ -18,8 +18,8 @@ class bcolors:
 
 config = json.load(open('config_funding.json'))
 
-okex_future = ccxt.okex3(config["okex_future"])
-okex_spot = ccxt.okex3(config["okex_spot"])
+okex_future = ccxt.okex(config["okex_future"])
+okex_spot = ccxt.okex(config["okex_spot"])
 okex_future.load_markets()
 okex_spot.load_markets()
 
@@ -40,6 +40,8 @@ fundingRate = None
 
 
 def get_spread_close(symbol, future, spot):
+    if "FIL" in symbol:
+        return " "
     if "USDT-SWAP" in symbol:
         spot_symbol = symbol.replace('-USDT-SWAP', '/USDT')
     else:

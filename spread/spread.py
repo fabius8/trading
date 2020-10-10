@@ -33,7 +33,7 @@ close_trade_amount = 0
 Trade_mode = config["trade_mode"]
 side = 0
 init_balance = 0
-miss_balance_btc = 2
+miss_balance_btc = 0
 total_fund = 0
 profit = 0
 need_check_balance = True
@@ -50,7 +50,7 @@ close_hit = 0
 trade_hit = 0
 
 A = ccxt.binance(config["binance"])
-B = ccxt.okex3(config["okex"])
+B = ccxt.okex(config["okex"])
 A.load_markets()
 B.load_markets()
 
